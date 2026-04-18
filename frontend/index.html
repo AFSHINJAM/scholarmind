@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarMind</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--paper:#f5f0e8;--cream:#faf7f2;--gold:#c9a84c;--gold-light:#e8d5a3;--teal:#1a4a4a;--teal-mid:#2d6b6b;--teal-light:#4a9b9b;--rust:#8b3a2a;--muted:#6b6560;--border:#ddd8ce;--shadow:rgba(13,13,13,0.08);--success:#28a745;--warning:#e67e22;--danger:#dc3545}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+/* AUTH */
+#auth-view{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--teal) 0%,#0d2e2e 100%)}
+.auth-card{background:white;border-radius:16px;padding:2.5rem;width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.auth-logo{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--teal);text-align:center;margin-bottom:0.25rem}
+.auth-logo span{color:var(--gold)}
+.auth-sub{text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:2rem}
+.auth-tabs{display:flex;border:1.5px solid var(--border);border-radius:8px;margin-bottom:1.5rem;overflow:hidden}
+.auth-tab{flex:1;padding:0.6rem;text-align:center;cursor:pointer;font-size:0.85rem;font-weight:500;color:var(--muted);background:white;border:none;transition:all 0.2s}
+.auth-tab.active{background:var(--teal);color:white}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.04em}
+.form-input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.15s;background:var(--cream)}
+.form-input:focus{border-color:var(--teal);background:white}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.btn{padding:0.75rem 1.2rem;border-radius:6px;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--teal);color:white;width:100%}
+.btn-primary:hover{background:var(--teal-mid)}
+.btn-secondary{background:white;color:var(--teal);border:1.5px solid var(--teal)}
+.btn-secondary:hover{background:var(--teal);color:white}
+.btn-danger{background:var(--danger);color:white}
+.btn-sm{padding:0.4rem 0.8rem;font-size:0.8rem}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-gold:hover{background:#b8962e}
+.error-msg{color:var(--danger);font-size:0.82rem;margin-top:0.5rem;text-align:center}
+/* APP LAYOUT */
+#app-view{display:none;min-height:100vh}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+/* SIDEBAR */
+.sidebar{background:var(--teal);color:white;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;padding:1.2rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-logo span{color:var(--gold)}
+.nav-section{padding:0.75rem 0.75rem 0;margin-bottom:0.5rem}
+.nav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 0.5rem;margin-bottom:0.3rem}
+.nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.55rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.84rem;color:rgba(255,255,255,0.7);transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:white}
+.nav-item.active{background:rgba(255,255,255,0.16);color:white;font-weight:500}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--ink);font-size:0.62rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:1rem 0.75rem;border-top:1px solid rgba(255,255,255,0.1)}
+.user-chip{display:flex;align-items:center;gap:0.6rem;padding:0.5rem}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--ink);flex-shrink:0}
+.user-info .name{font-size:0.82rem;font-weight:600;color:white}
+.user-info .role{font-size:0.68rem;color:rgba(255,255,255,0.5)}
+.logout-btn{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.75rem;border-radius:5px;cursor:pointer;font-size:0.78rem;color:rgba(255,255,255,0.5);border:none;background:none;width:100%;margin-top:0.3rem;transition:color 0.15s}
+.logout-btn:hover{color:white}
+/* MAIN */
+.main{background:var(--cream);overflow:auto}
+.topbar{background:white;border-bottom:1px solid var(--border);padding:0.85rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-title{font-size:1rem;font-weight:600;color:var(--ink)}
+.topbar-actions{display:flex;gap:0.6rem;align-items:center}
+.content{padding:1.5rem 2rem}
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+/* CARDS */
+.card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem}
+.card-title{font-size:0.88rem;font-weight:600;color:var(--ink);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem}
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+/* STAT CARDS */
+.stat-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--teal);display:block}
+.stat-label{font-size:0.75rem;color:var(--muted);margin-top:0.2rem}
+/* TASK ITEMS */
+.task-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.8rem;border-radius:8px;border:1px solid var(--border);margin-bottom:0.5rem;background:white}
+.task-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.task-text{flex:1}
+.task-title{font-size:0.85rem;font-weight:500;color:var(--ink)}
+.task-sub{font-size:0.72rem;color:var(--muted)}
+.priority-high{border-left:3px solid var(--danger)}
+.priority-medium{border-left:3px solid var(--warning)}
+.priority-low{border-left:3px solid var(--success)}
+/* PAPER LIST */
+.paper-item{background:white;border-radius:10px;border:1px solid var(--border);padding:1rem 1.2rem;margin-bottom:0.6rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:1rem}
+.paper-item:hover{border-color:var(--teal);box-shadow:0 3px 12px var(--shadow)}
+.paper-info{flex:1;min-width:0}
+.paper-title-text{font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paper-meta-row{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.tag{font-size:0.65rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:3px;text-transform:uppercase;letter-spacing:0.04em}
+.tag-journal{background:rgba(26,74,74,0.1);color:var(--teal)}
+.tag-thesis{background:rgba(201,168,76,0.15);color:#7a6020}
+.tag-grant{background:rgba(40,100,167,0.1);color:#1a4a8a}
+.tag-pending{background:rgba(230,126,34,0.1);color:#8a4a1a}
+.tag-in_progress{background:rgba(52,152,219,0.1);color:#1a5a8a}
+.tag-completed{background:rgba(40,167,69,0.1);color:#1a6b2a}
+.due-text{font-size:0.72rem;color:var(--muted)}
+.due-overdue{color:var(--danger);font-weight:600}
+/* REVIEW EDITOR */
+.review-layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem}
+.review-form .section-label{font-size:0.72rem;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.3rem}
+.review-textarea{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.83rem;resize:vertical;font-family:'DM Sans',sans-serif;outline:none;min-height:90px;background:var(--cream);transition:border 0.15s;line-height:1.6}
+.review-textarea:focus{border-color:var(--teal);background:white}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+.score-select{width:100%;border:1.5px solid var(--border);border-radius:5px;padding:0.4rem 0.5rem;font-size:0.82rem;outline:none;background:var(--cream);cursor:pointer}
+.score-select:focus{border-color:var(--teal)}
+/* CHECKLIST */
+.check-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;padding:0.3rem 0;border-bottom:1px solid var(--border)}
+.check-item:last-child{border-bottom:none}
+.check-pass{color:var(--success)}
+.check-warn{color:var(--warning)}
+.check-fail{color:var(--danger)}
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;height:calc(100vh - 140px)}
+.chat-panel{background:white;border-radius:10px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.chat-header{padding:0.8rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem}
+.chat-header h4{font-size:0.88rem;font-weight:600;color:var(--ink)}
+.claude-badge{background:var(--teal);color:white;font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:3px;font-weight:600;margin-left:auto}
+.messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem}
+.msg{padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;line-height:1.55;max-width:90%}
+.msg-user{background:var(--teal);color:white;align-self:flex-end;border-radius:8px 8px 2px 8px}
+.msg-claude{background:var(--cream);border:1px solid var(--border);align-self:flex-start;border-radius:8px 8px 8px 2px}
+.msg-source{font-size:0.65rem;color:var(--gold);font-weight:600;display:block;margin-bottom:3px}
+.msg-thinking{color:var(--muted);font-style:italic}
+.chat-input-area{border-top:1px solid var(--border);padding:0.75rem;display:flex;gap:0.5rem}
+.chat-input{flex:1;border:1.5px solid var(--border);border-radius:6px;padding:0.55rem 0.75rem;font-size:0.82rem;resize:none;height:64px;font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);transition:border 0.15s}
+.chat-input:focus{border-color:var(--teal);background:white}
+.chat-send{background:var(--teal);color:white;border:none;border-radius:6px;padding:0.5rem 0.85rem;cursor:pointer;font-size:0.82rem;font-weight:500;align-self:stretch;transition:background 0.15s}
+.chat-send:hover{background:var(--teal-mid)}
+/* PAPER INFO SIDEBAR */
+.paper-sidebar{display:flex;flex-direction:column;gap:0.75rem}
+/* STUDENTS */
+.student-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:0.75rem}
+.student-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem}
+.student-avatar{width:40px;height:40px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700;color:white;flex-shrink:0}
+.student-name{font-size:0.95rem;font-weight:600;color:var(--ink)}
+.student-prog{font-size:0.75rem;color:var(--muted)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0.5rem 0}
+.progress-fill{height:100%;background:var(--teal);border-radius:3px;transition:width 0.3s}
+.milestone-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;padding:0.25rem 0}
+.milestone-check{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;transition:all 0.15s}
+.milestone-check.done{background:var(--success);border-color:var(--success);color:white}
+/* GRANTS */
+.grant-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:0.75rem}
+.grant-header{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.6rem}
+.agency-badge{background:var(--teal);color:white;font-size:0.65rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:4px;flex-shrink:0;margin-top:2px}
+.grant-title{font-size:0.9rem;font-weight:600;color:var(--ink)}
+.grant-meta{font-size:0.75rem;color:var(--muted)}
+.deadline-soon{color:var(--danger);font-weight:600}
+.grant-status-select{border:1px solid var(--border);border-radius:4px;padding:0.25rem 0.4rem;font-size:0.72rem;cursor:pointer;background:white}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:12px;padding:2rem;width:560px;max-height:85vh;overflow-y:auto;position:relative}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.2rem;color:var(--ink)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted)}
+/* GRANT WRITER */
+.grant-sections{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.section-tab{padding:0.35rem 0.7rem;border-radius:4px;font-size:0.78rem;cursor:pointer;border:1px solid var(--border);background:white;color:var(--muted);transition:all 0.15s}
+.section-tab.active{background:var(--teal);color:white;border-color:var(--teal)}
+/* LOADING */
+.loading{display:inline-flex;gap:3px;align-items:center}
+.loading span{width:5px;height:5px;border-radius:50%;background:var(--teal-light);animation:bounce 1s infinite}
+.loading span:nth-child(2){animation-delay:0.2s}
+.loading span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;background:white;margin-bottom:1rem}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--teal);background:rgba(26,74,74,0.02)}
+.upload-icon{font-size:2rem;margin-bottom:0.5rem;display:block}
+/* SCORE BARS */
+.score-bar-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem}
+.score-bar-label{font-size:0.72rem;color:var(--muted);width:120px;flex-shrink:0}
+.score-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;background:var(--teal);border-radius:3px}
+.score-bar-val{font-size:0.72rem;font-weight:600;color:var(--ink);width:30px;text-align:right}
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;display:block;margin-bottom:0.75rem}
+.empty-text{font-size:0.9rem;font-weight:500;color:var(--ink);margin-bottom:0.25rem}
+.empty-sub{font-size:0.8rem}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--teal);color:white;padding:0.75rem 1.2rem;border-radius:8px;font-size:0.85rem;font-weight:500;z-index:9999;transform:translateY(100px);opacity:0;transition:all 0.3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger)}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-view">
+  <div class="auth-card">
+    <div class="auth-logo">Scholar<span>Mind</span></div>
+    <div class="auth-sub">Academic Intelligence Platform · Powered by Claude AI</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="login-form">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="you@university.ca" value="demo@mcgill.ca"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" value="demo1234"></div>
+      <div id="login-error" class="error-msg"></div>
+      <button class="btn btn-primary" style="margin-top:0.5rem" onclick="login()">Sign In →</button>
+      <p style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:0.75rem">Demo: demo@mcgill.ca / demo1234</p>
+    </div>
+    <!-- REGISTER -->
+    <div id="register-form" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="reg-name" placeholder="Dr. Jane Smith"></div>
+        <div class="form-group"><label class="form-label">Role</label><select class="form-input" id="reg-role"><option value="researcher">Research Associate</option><option value="professor">Professor</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email" placeholder="you@university.ca"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="reg-password" type="password" placeholder="min 8 characters"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Institution</label><input class="form-input" id="reg-institution" placeholder="McGill University"></div>
+        <div class="form-group"><label class="form-label">Department</label><input class="form-input" id="reg-dept" placeholder="Epidemiology"></div>
+      </div>
+      <div id="reg-error" class="error-msg"></div>
+      <button class="btn btn-primary" style="margin-top:0.5rem" onclick="register()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-view">
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Scholar<span>Mind</span></div>
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <button class="nav-item active" onclick="showPanel('dashboard')">📊 Dashboard</button>
+      <button class="nav-item" onclick="showPanel('papers')">📄 My Papers <span class="nav-badge" id="badge-papers">0</span></button>
+      <button class="nav-item" onclick="showPanel('reviews')">✍️ Reviews <span class="nav-badge" id="badge-reviews">0</span></button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Academic</div>
+      <button class="nav-item" onclick="showPanel('students')">🎓 Students</button>
+      <button class="nav-item" onclick="showPanel('grants')">💰 Grants</button>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="user-chip">
+        <div class="avatar" id="user-avatar">?</div>
+        <div class="user-info">
+          <div class="name" id="user-name">Loading...</div>
+          <div class="role" id="user-role"></div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">⎋ Sign out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="topbar"><span class="topbar-title">📊 Dashboard</span><div class="topbar-actions"><span id="dash-greeting" style="font-size:0.82rem;color:var(--muted)"></span></div></div>
+      <div class="content">
+        <div class="grid-4" id="dash-stats" style="margin-bottom:1.5rem"></div>
+        <div class="grid-2">
+          <div>
+            <div class="card"><div class="card-title">🔴 Urgent Tasks</div><div id="dash-tasks"></div></div>
+            <div class="card"><div class="card-title">📄 Recent Papers</div><div id="dash-papers"></div></div>
+          </div>
+          <div>
+            <div class="card"><div class="card-title">💰 Upcoming Grant Deadlines</div><div id="dash-grants"></div></div>
+            <div class="card"><div class="card-title">🎓 Students</div><div id="dash-students"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAPERS -->
+    <div class="panel" id="panel-papers">
+      <div class="topbar">
+        <span class="topbar-title">📄 Papers for Review</span>
+        <div class="topbar-actions">
+          <select class="form-input btn-sm" id="paper-filter" onchange="filterPapers()" style="width:140px">
+            <option value="">All Types</option>
+            <option value="journal_review">Journal Review</option>
+            <option value="thesis_phd">PhD Thesis</option>
+            <option value="thesis_msc">MSc Thesis</option>
+            <option value="grant">Grant Review</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openUploadModal()">+ Upload Paper</button>
+        </div>
+      </div>
+      <div class="content">
+        <div id="papers-list"></div>
+      </div>
+    </div>
+
+    <!-- REVIEW EDITOR -->
+    <div class="panel" id="panel-review-editor">
+      <div class="topbar">
+        <span class="topbar-title" id="review-editor-title">✍️ Review Editor</span>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary btn-sm" onclick="showPanel('papers')">← Back</button>
+          <button class="btn btn-secondary btn-sm" onclick="saveReview()">💾 Save</button>
+          <button class="btn btn-gold btn-sm" onclick="exportReview()">📥 Export Word</button>
+          <button class="btn btn-primary btn-sm" onclick="completeReview()">✓ Complete</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="review-layout">
+          <div class="review-form card" id="review-form-content"></div>
+          <div id="review-sidebar"></div>
+        </div>
+        <div class="chat-layout" style="height:420px;margin-top:1rem">
+          <div class="chat-panel">
+            <div class="chat-header"><h4>💬 Ask Claude about this paper</h4><span class="claude-badge">Claude Sonnet 4.6</span></div>
+            <div class="messages" id="review-chat-messages"></div>
+            <div class="chat-input-area">
+              <textarea class="chat-input" id="review-chat-input" placeholder="Ask about methods, statistics, concerns..." onkeydown="chatKeydown(event,'review')"></textarea>
+              <button class="chat-send" onclick="sendChat('review')">Send</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem">
+            <div class="card" id="review-checklist-panel"><div class="card-title">✅ Auto Checklist</div><div id="checklist-content">Run analysis to see checklist</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS LIST -->
+    <div class="panel" id="panel-reviews">
+      <div class="topbar"><span class="topbar-title">✍️ All Reviews</span></div>
+      <div class="content"><div id="reviews-list"></div></div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="panel" id="panel-students">
+      <div class="topbar">
+        <span class="topbar-title">🎓 Students</span>
+        <div class="topbar-actions"><button class="btn btn-primary btn-sm" onclick="openAddStudentModal()">+ Add Student</button></div>
+      </div>
+      <div class="content"><div id="students-list"></div></div>
+    </div>
+
+    <!-- GRANTS -->
+    <div class="panel" id="panel-grants">
+      <div class="topbar">
+        <span class="topbar-title">💰 Grants</span>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary btn-sm" onclick="findOpportunities()">🔍 Find Opportunities</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddGrantModal()">+ Add Grant</button>
+        </div>
+      </div>
+      <div class="content"><div id="grants-list"></div></div>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('upload-modal')">✕</button>
+    <div class="modal-title">Upload Paper for Review</div>
+    <div class="form-group"><label class="form-label">Paper Title *</label><input class="form-input" id="up-title" placeholder="Full title of the manuscript"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type *</label>
+        <select class="form-input" id="up-type">
+          <option value="journal_review">Journal Article Review</option>
+          <option value="thesis_phd">PhD Thesis</option>
+          <option value="thesis_msc">MSc Thesis</option>
+          <option value="grant">Grant Proposal</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Journal / Institution</label><input class="form-input" id="up-journal" placeholder="e.g. Nature Genetics"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Authors</label><input class="form-input" id="up-authors" placeholder="Smith J et al."></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" id="up-due" type="date"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Main File (PDF) *</label>
+      <div class="upload-zone" id="main-upload-zone" onclick="document.getElementById('up-file').click()">
+        <span class="upload-icon">📄</span>
+        <div id="main-file-name" style="font-size:0.85rem;font-weight:500">Click to upload PDF</div>
+        <div style="font-size:0.75rem;color:var(--muted)">Main manuscript</div>
+      </div>
+      <input type="file" id="up-file" accept=".pdf,.doc,.docx,.txt,.r,.R,.py,.csv,.md,.rmd,.Rmd,.tex,.html" style="display:none" onchange="updateFileName('up-file','main-file-name')">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Supplementary Files (optional)</label>
+      <div class="upload-zone" onclick="document.getElementById('up-supp').click()" style="padding:1rem">
+        <div id="supp-file-name" style="font-size:0.82rem;color:var(--muted)">📎 Click to add supplementary materials</div>
+      </div>
+      <input type="file" id="up-supp" accept=".pdf,.doc,.docx,.txt,.r,.R,.py,.csv,.md,.tex" multiple style="display:none" onchange="updateFileName('up-supp','supp-file-name',true)">
+    </div>
+    <div id="upload-error" class="error-msg"></div>
+    <button class="btn btn-primary" onclick="uploadPaper()" id="upload-btn">Upload & Analyze with Claude →</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="student-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('student-modal')">✕</button>
+    <div class="modal-title" id="student-modal-title">Add Student</div>
+    <input type="hidden" id="student-edit-id">
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="st-name" placeholder="Student Name"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="st-email" placeholder="student@mail.mcgill.ca"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Program</label><select class="form-input" id="st-program"><option>PhD</option><option>MSc</option><option>PostDoc</option></select></div>
+      <div class="form-group"><label class="form-label">Year</label><input class="form-input" id="st-year" type="number" min="1" max="8" value="1"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Thesis Title</label><input class="form-input" id="st-thesis" placeholder="Working title"></div>
+    <div class="form-group"><label class="form-label">Progress (%)</label><input class="form-input" id="st-progress" type="number" min="0" max="100" value="0"></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="review-textarea" id="st-notes" rows="2" placeholder="Any notes about this student's situation..."></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Last Meeting</label><input class="form-input" id="st-last-meeting" type="date"></div>
+      <div class="form-group"><label class="form-label">Next Meeting</label><input class="form-input" id="st-next-meeting" type="date"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="grant-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('grant-modal')">✕</button>
+    <div class="modal-title">Add Grant</div>
+    <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="gr-title" placeholder="Grant title"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Agency *</label><input class="form-input" id="gr-agency" placeholder="CIHR, NSERC, NIH..."></div>
+      <div class="form-group"><label class="form-label">Program</label><input class="form-input" id="gr-program" placeholder="Project Grant, R01..."></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Deadline</label><input class="form-input" id="gr-deadline" type="date"></div>
+      <div class="form-group"><label class="form-label">Amount</label><input class="form-input" id="gr-amount" placeholder="$250,000/year"></div>
+    </div>
+    <div class="form-group"><label class="form-label">URL</label><input class="form-input" id="gr-url" placeholder="https://..."></div>
+    <div class="form-group"><label class="form-label">Description / Notes</label><textarea class="review-textarea" id="gr-desc" rows="2"></textarea></div>
+    <button class="btn btn-primary" onclick="saveGrant()">Add Grant</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="grant-writer-modal">
+  <div class="modal" style="width:700px;max-width:95vw">
+    <button class="modal-close" onclick="closeModal('grant-writer-modal')">✕</button>
+    <div class="modal-title" id="grant-writer-title">Grant Writing Studio</div>
+    <div class="form-group"><label class="form-label">Your Research Profile (helps Claude write better)</label><textarea class="review-textarea" id="grant-profile" rows="2" placeholder="e.g. Research Associate in statistical genetics at McGill, working on Mendelian randomization, multi-omics, and epidemiology of cardiometabolic diseases..."></textarea></div>
+    <div class="grant-sections">
+      <button class="section-tab active" onclick="selectGrantSection('specific_aims',this)">Specific Aims</button>
+      <button class="section-tab" onclick="selectGrantSection('significance',this)">Significance</button>
+      <button class="section-tab" onclick="selectGrantSection('innovation',this)">Innovation</button>
+      <button class="section-tab" onclick="selectGrantSection('approach',this)">Approach</button>
+      <button class="section-tab" onclick="selectGrantSection('team',this)">Team</button>
+      <button class="section-tab" onclick="selectGrantSection('budget_justification',this)">Budget</button>
+    </div>
+    <div class="form-group"><label class="form-label">Current Draft (optional — Claude will improve it)</label><textarea class="review-textarea" id="grant-existing" rows="3" placeholder="Paste existing text or leave empty for Claude to write from scratch..."></textarea></div>
+    <div id="grant-writer-error" class="error-msg"></div>
+    <button class="btn btn-primary" onclick="writeGrantSection()" id="grant-write-btn">✨ Write with Claude →</button>
+    <div id="grant-output" style="margin-top:1rem;display:none">
+      <label class="form-label">Claude's Draft</label>
+      <textarea class="review-textarea" id="grant-output-text" rows="10" style="min-height:200px"></textarea>
+      <button class="btn btn-secondary btn-sm" style="margin-top:0.5rem" onclick="copyGrantOutput()">📋 Copy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="followup-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('followup-modal')">✕</button>
+    <div class="modal-title">AI Follow-up Email</div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Claude generated this follow-up email. Edit as needed then copy.</p>
+    <textarea class="review-textarea" id="followup-text" rows="8" style="min-height:160px"></textarea>
+    <button class="btn btn-primary btn-sm" style="margin-top:0.75rem" onclick="copyFollowup()">📋 Copy Email</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:8000/api';
+let token = localStorage.getItem('sm_token');
+let currentUser = JSON.parse(localStorage.getItem('sm_user') || 'null');
+let currentPaperId = null;
+let currentReviewId = null;
+let currentGrantId = null;
+let selectedGrantSection = 'specific_aims';
+let allPapers = [];
+
+// ── API helpers ──
+async function api(method, path, body=null, isForm=false) {
+  const opts = { method, headers: {} };
+  if (token) opts.headers['Authorization'] = `Bearer ${token}`;
+  if (body && !isForm) { opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
+  if (body && isForm) opts.body = body;
+  const r = await fetch(API+path, opts);
+  if (r.status === 401) { logout(); return null; }
+  if (!r.ok) { const e = await r.json().catch(()=>({detail:'Error'})); throw new Error(e.detail||'Error'); }
+  if (r.headers.get('content-type')?.includes('application/json')) return r.json();
+  return r;
+}
+
+// ── Auth ──
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('login-form').style.display = tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display = tab==='register'?'block':'none';
+}
+
+async function login() {
+  const email=document.getElementById('login-email').value;
+  const password=document.getElementById('login-password').value;
+  try {
+    const fd=new FormData(); fd.append('username',email); fd.append('password',password);
+    const r=await api('POST','/auth/login',fd,true);
+    if (!r) return;
+    token=r.access_token; currentUser=r.user;
+    localStorage.setItem('sm_token',token); localStorage.setItem('sm_user',JSON.stringify(currentUser));
+    initApp();
+  } catch(e) { document.getElementById('login-error').textContent=e.message; }
+}
+
+async function register() {
+  try {
+    const r=await api('POST','/auth/register',{
+      email:document.getElementById('reg-email').value,
+      password:document.getElementById('reg-password').value,
+      name:document.getElementById('reg-name').value,
+      role:document.getElementById('reg-role').value,
+      institution:document.getElementById('reg-institution').value,
+      department:document.getElementById('reg-dept').value
+    });
+    if(!r) return;
+    token=r.access_token; currentUser=r.user;
+    localStorage.setItem('sm_token',token); localStorage.setItem('sm_user',JSON.stringify(currentUser));
+    initApp();
+  } catch(e) { document.getElementById('reg-error').textContent=e.message; }
+}
+
+function logout() {
+  token=null; currentUser=null;
+  localStorage.removeItem('sm_token'); localStorage.removeItem('sm_user');
+  document.getElementById('app-view').style.display='none';
+  document.getElementById('auth-view').style.display='flex';
+}
+
+// ── App init ──
+function initApp() {
+  document.getElementById('auth-view').style.display='none';
+  document.getElementById('app-view').style.display='block';
+  if(currentUser){
+    document.getElementById('user-name').textContent=currentUser.name||'User';
+    document.getElementById('user-role').textContent=`${currentUser.role||''} · ${currentUser.institution||''}`;
+    document.getElementById('user-avatar').textContent=(currentUser.name||'?')[0].toUpperCase();
+    const h=new Date().getHours();
+    document.getElementById('dash-greeting').textContent=`Good ${h<12?'morning':h<17?'afternoon':'evening'}, ${currentUser.name?.split(' ')[0]||''}`;
+  }
+  loadDashboard();
+  loadPapers();
+  loadReviews();
+}
+
+// ── Panels ──
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+name)?.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.toLowerCase().includes(name.split('-')[0])) n.classList.add('active'); });
+  if(name==='papers') loadPapers();
+  if(name==='reviews') loadReviews();
+  if(name==='students') loadStudents();
+  if(name==='grants') loadGrants();
+  if(name==='dashboard') loadDashboard();
+}
+
+// ── Dashboard ──
+async function loadDashboard() {
+  try {
+    const d=await api('GET','/dashboard/');
+    if(!d) return;
+    const s=d.stats;
+    document.getElementById('dash-stats').innerHTML=`
+      <div class="stat-card"><span class="stat-num">${s.total_papers}</span><div class="stat-label">Total Papers</div></div>
+      <div class="stat-card"><span class="stat-num" style="color:var(--warning)">${s.pending_reviews}</span><div class="stat-label">Pending Reviews</div></div>
+      <div class="stat-card"><span class="stat-num" style="color:var(--success)">${s.completed_reviews}</span><div class="stat-label">Completed</div></div>
+      <div class="stat-card"><span class="stat-num">${s.total_students}</span><div class="stat-label">Students</div></div>`;
+    document.getElementById('dash-tasks').innerHTML=d.urgent_tasks.length?d.urgent_tasks.map(t=>`
+      <div class="task-item priority-${t.priority}" onclick="handleTaskClick(${JSON.stringify(t).replace(/"/g,"'")})">
+        <span class="task-icon">${t.type==='overdue_review'?'🔴':t.type==='review_due'?'⏰':t.type==='grant_deadline'?'💰':'🎓'}</span>
+        <div class="task-text"><div class="task-title">${t.title}</div></div>
+      </div>`).join(''):'<div class="empty-state" style="padding:1rem"><span class="empty-icon">✅</span><div class="empty-text">All caught up!</div></div>';
+    document.getElementById('dash-papers').innerHTML=d.recent_papers.map(p=>`
+      <div class="paper-item" onclick="openPaper(${p.id})">
+        <div class="paper-info">
+          <div class="paper-title-text">${p.title}</div>
+          <div class="paper-meta-row"><span class="tag tag-${p.paper_type}">${formatType(p.paper_type)}</span><span class="tag tag-${p.status}">${p.status}</span></div>
+        </div>
+      </div>`).join('')||'<div style="color:var(--muted);font-size:0.82rem">No papers yet</div>';
+    document.getElementById('dash-grants').innerHTML=d.upcoming_grants.map(g=>{
+      const days=g.deadline?Math.ceil((new Date(g.deadline)-new Date())/86400000):null;
+      return `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border)">
+        <span class="agency-badge">${g.agency}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.title}</div>
+        ${days!==null?`<div class="due-text ${days<=14?'due-overdue':''}">${days}d left</div>`:''}
+        </div></div>`;}).join('')||'<div style="color:var(--muted);font-size:0.82rem">No upcoming deadlines</div>';
+    document.getElementById('dash-students').innerHTML=d.students_summary.map(s=>`
+      <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border)">
+        <div class="avatar" style="width:28px;height:28px;font-size:0.7rem">${s.name[0]}</div>
+        <div style="flex:1"><div style="font-size:0.82rem;font-weight:500">${s.name}</div>
+          <div class="progress-bar" style="margin:2px 0 0"><div class="progress-fill" style="width:${s.progress_percent}%"></div></div>
+        </div><span style="font-size:0.72rem;color:var(--muted)">${s.progress_percent}%</span>
+      </div>`).join('')||'<div style="color:var(--muted);font-size:0.82rem">No students added</div>';
+  } catch(e){ console.error(e); }
+}
+
+function handleTaskClick(t) {
+  if(t.type.includes('review')||t.type==='overdue_review') { showPanel('papers'); }
+  else if(t.type==='grant_deadline') { showPanel('grants'); }
+  else if(t.type==='student_checkin') { showPanel('students'); }
+}
+
+// ── Papers ──
+async function loadPapers() {
+  try {
+    allPapers=await api('GET','/papers/');
+    if(!allPapers) return;
+    document.getElementById('badge-papers').textContent=allPapers.filter(p=>p.status!=='completed').length;
+    renderPapers(allPapers);
+  } catch(e){ console.error(e); }
+}
+
+function filterPapers(){
+  const f=document.getElementById('paper-filter').value;
+  renderPapers(f?allPapers.filter(p=>p.paper_type===f):allPapers);
+}
+
+function renderPapers(papers) {
+  const el=document.getElementById('papers-list');
+  if(!papers.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">📄</span><div class="empty-text">No papers yet</div><div class="empty-sub">Upload your first paper to get started</div></div>`; return; }
+  el.innerHTML=papers.map(p=>{
+    const days=p.due_date?Math.ceil((new Date(p.due_date)-new Date())/86400000):null;
+    const overdue=days!==null&&days<0;
+    return `<div class="paper-item" onclick="openPaper(${p.id})">
+      <div class="paper-info">
+        <div class="paper-title-text">${p.title}</div>
+        <div class="paper-meta-row">
+          <span class="tag tag-${p.paper_type}">${formatType(p.paper_type)}</span>
+          <span class="tag tag-${p.status}">${p.status.replace('_',' ')}</span>
+          ${p.journal?`<span style="font-size:0.72rem;color:var(--muted)">${p.journal}</span>`:''}
+          ${p.supp_count?`<span style="font-size:0.68rem;color:var(--muted)">+${p.supp_count} supp</span>`:''}
+        </div>
+      </div>
+      ${days!==null?`<div class="due-text ${overdue?'due-overdue':''}">${overdue?'Overdue '+Math.abs(days)+'d':days+'d left'}</div>`:''}
+      <button class="btn btn-danger btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();deletePaper(${p.id})">🗑</button>
+    </div>`;}).join('');
+}
+
+async function openPaper(id) {
+  currentPaperId=id;
+  showPanel('review-editor');
+  document.getElementById('review-editor-title').textContent='⏳ Loading...';
+  document.getElementById('review-form-content').innerHTML='<div style="padding:2rem;text-align:center;color:var(--muted)">Loading paper data...</div>';
+  try {
+    const [paper,review,history]=await Promise.all([
+      api('GET',`/papers/${id}`),
+      api('GET','/reviews/').then(rs=>rs.find(r=>r.paper_id===id)),
+      api('GET',`/papers/${id}/chat/history`)
+    ]);
+    currentReviewId=review?.id||null;
+    renderReviewEditor(paper,review);
+    renderChatHistory(history||[]);
+    if(!review||!review.claude_analysis){
+      showToast('Running Claude analysis...');
+      runAnalysis(id);
+    }
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+function renderReviewEditor(paper,review) {
+  document.getElementById('review-editor-title').textContent=`✍️ ${paper.title.substring(0,50)}...`;
+  document.getElementById('review-form-content').innerHTML=`
+    <div style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+      <span class="tag tag-${paper.paper_type}">${formatType(paper.paper_type)}</span>
+      ${paper.journal?`<span class="tag tag-journal">${paper.journal}</span>`:''}
+      <span class="tag tag-${paper.status}">${paper.status}</span>
+    </div>
+    <div class="form-group"><span class="section-label">Summary of the Work</span>
+      <textarea class="review-textarea" id="rv-summary" rows="4">${review?.summary||''}</textarea></div>
+    <div class="form-group"><span class="section-label">Major Concerns</span>
+      <textarea class="review-textarea" id="rv-major" rows="5">${review?.major_concerns||''}</textarea></div>
+    <div class="form-group"><span class="section-label">Minor Concerns</span>
+      <textarea class="review-textarea" id="rv-minor" rows="3">${review?.minor_concerns||''}</textarea></div>
+    <div class="form-group"><span class="section-label">Scores</span>
+      <div class="score-grid">
+        <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Recommendation</div>
+          <select class="score-select" id="rv-rec">
+            ${['Accept','Minor Revision','Major Revision','Reject'].map(o=>`<option ${review?.recommendation===o?'selected':''}>${o}</option>`).join('')}
+          </select></div>
+        <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Novelty (0-10)</div><input class="score-select" id="rv-novelty" type="number" min="0" max="10" step="0.5" value="${review?.score_novelty||''}"></div>
+        <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Methodology (0-10)</div><input class="score-select" id="rv-method" type="number" min="0" max="10" step="0.5" value="${review?.score_methodology||''}"></div>
+        <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Statistics (0-10)</div><input class="score-select" id="rv-stats" type="number" min="0" max="10" step="0.5" value="${review?.score_statistics||''}"></div>
+      </div>
+    </div>`;
+  renderReviewSidebar(review);
+}
+
+function renderReviewSidebar(review) {
+  const scores=review?[
+    {l:'Novelty',v:review.score_novelty},{l:'Methodology',v:review.score_methodology},
+    {l:'Clarity',v:review.score_clarity},{l:'Statistics',v:review.score_statistics}
+  ].filter(s=>s.v):'';
+  document.getElementById('review-sidebar').innerHTML=`
+    ${scores.length?`<div class="card"><div class="card-title">📊 Scores</div>
+      ${scores.map(s=>`<div class="score-bar-row"><div class="score-bar-label">${s.l}</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:${s.v*10}%"></div></div>
+        <div class="score-bar-val">${s.v}</div></div>`).join('')}
+      <div style="margin-top:0.75rem;font-size:0.82rem"><strong>Recommendation:</strong> ${review?.recommendation||'—'}</div>
+    </div>`:''}
+    <div class="card"><div class="card-title">🤖 Claude Analysis</div>
+      <div style="font-size:0.78rem;line-height:1.6;color:var(--ink)">${review?.claude_analysis||'<span style="color:var(--muted)">Analysis will appear here after running.</span>'}</div>
+      ${!review?.claude_analysis?`<button class="btn btn-secondary btn-sm" style="margin-top:0.75rem;width:100%" onclick="runAnalysis(${currentPaperId})">▶ Run Analysis</button>`:''}
+    </div>`;
+  if(review?.claude_checklist?.length) {
+    document.getElementById('checklist-content').innerHTML=review.claude_checklist.map(c=>`
+      <div class="check-item">
+        <span class="check-${c.status}">
+          ${c.status==='pass'?'✓':c.status==='warn'?'⚠':'✗'}
+        </span>
+        <span style="flex:1">${c.item}</span>
+        ${c.note?`<span style="color:var(--muted);font-size:0.68rem">${c.note}</span>`:''}
+      </div>`).join('');
+  }
+}
+
+async function runAnalysis(paperId) {
+  showToast('Claude is analyzing the full paper... this may take 30-60 seconds');
+  try {
+    const result=await api('POST',`/papers/${paperId}/analyze`);
+    currentReviewId=null;
+    const reviews=await api('GET','/reviews/');
+    const r=reviews.find(rv=>rv.paper_id===paperId);
+    if(r){ currentReviewId=r.id; renderReviewSidebar(r); }
+    showToast('Analysis complete!');
+    if(document.getElementById('rv-summary')) {
+      document.getElementById('rv-summary').value=result.summary||'';
+      document.getElementById('rv-major').value=result.major_concerns||'';
+      document.getElementById('rv-minor').value=result.minor_concerns||'';
+    }
+  } catch(e){ showToast('Analysis failed: '+e.message,'error'); }
+}
+
+async function saveReview() {
+  if(!currentReviewId){ showToast('Run analysis first','error'); return; }
+  try {
+    await api('PUT',`/reviews/${currentReviewId}`,{
+      summary:document.getElementById('rv-summary').value,
+      major_concerns:document.getElementById('rv-major').value,
+      minor_concerns:document.getElementById('rv-minor').value,
+      recommendation:document.getElementById('rv-rec').value,
+      score_novelty:parseFloat(document.getElementById('rv-novelty').value)||null,
+      score_methodology:parseFloat(document.getElementById('rv-method').value)||null,
+      score_statistics:parseFloat(document.getElementById('rv-stats').value)||null,
+    });
+    showToast('Review saved!');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+async function exportReview() {
+  if(!currentReviewId){ showToast('Save review first','error'); return; }
+  await saveReview();
+  window.open(`${API}/reviews/${currentReviewId}/export?token=${token}`,'_blank');
+  // Actually trigger download
+  const r=await fetch(`${API}/reviews/${currentReviewId}/export`,{headers:{Authorization:`Bearer ${token}`}});
+  const blob=await r.blob();
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='review.docx'; a.click();
+  showToast('Review exported as Word document!');
+}
+
+async function completeReview() {
+  await saveReview();
+  if(!currentReviewId) return;
+  await api('POST',`/reviews/${currentReviewId}/complete`);
+  showToast('Review marked as complete!');
+  showPanel('papers'); loadPapers();
+}
+
+async function deletePaper(id) {
+  if(!confirm('Delete this paper and its review?')) return;
+  await api('DELETE',`/papers/${id}`);
+  loadPapers(); showToast('Paper deleted');
+}
+
+// ── Chat ──
+function renderChatHistory(history) {
+  const el=document.getElementById('review-chat-messages');
+  el.innerHTML='';
+  if(!history.length){
+    el.innerHTML=`<div class="msg msg-claude"><span class="msg-source">✦ ScholarMind · Claude</span>I've read your paper. Ask me anything about the methods, statistical approach, findings, limitations, or how it compares to other work in the field.</div>`;
+    return;
+  }
+  history.forEach(m=>appendMessage(m.role==='user'?'user':'claude',m.content));
+}
+
+function appendMessage(role,content) {
+  const el=document.getElementById('review-chat-messages');
+  const div=document.createElement('div');
+  div.className=`msg msg-${role}`;
+  div.innerHTML=role==='claude'?`<span class="msg-source">✦ ScholarMind · Claude</span>${content}`:content;
+  el.appendChild(div);
+  el.scrollTop=el.scrollHeight;
+  return div;
+}
+
+function chatKeydown(e,panel){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat(panel);}}
+
+async function sendChat(panel) {
+  const input=document.getElementById('review-chat-input');
+  const msg=input.value.trim();
+  if(!msg||!currentPaperId) return;
+  input.value='';
+  appendMessage('user',msg);
+  const thinking=appendMessage('claude','<span class="msg-thinking"><span class="loading"><span></span><span></span><span></span></span> Claude is reading...</span>');
+  try {
+    const r=await api('POST',`/papers/${currentPaperId}/chat`,{message:msg});
+    thinking.innerHTML=`<span class="msg-source">✦ ScholarMind · Claude</span>${r.response}`;
+  } catch(e){ thinking.innerHTML=`<span class="msg-source">✦ ScholarMind · Claude</span><span style="color:var(--danger)">${e.message}</span>`; }
+  document.getElementById('review-chat-messages').scrollTop=99999;
+}
+
+// ── Reviews list ──
+async function loadReviews() {
+  try {
+    const reviews=await api('GET','/reviews/');
+    if(!reviews) return;
+    document.getElementById('badge-reviews').textContent=reviews.filter(r=>r.status!=='completed').length;
+    const el=document.getElementById('reviews-list');
+    if(!reviews.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">✍️</span><div class="empty-text">No reviews yet</div><div class="empty-sub">Upload a paper to start reviewing</div></div>`; return; }
+    el.innerHTML=reviews.map(r=>{
+      const days=r.due_date?Math.ceil((new Date(r.due_date)-new Date())/86400000):null;
+      return `<div class="paper-item" onclick="openPaper(${r.paper_id})">
+        <div class="paper-info">
+          <div class="paper-title-text">${r.paper_title}</div>
+          <div class="paper-meta-row">
+            <span class="tag tag-${r.paper_type}">${formatType(r.paper_type)}</span>
+            <span class="tag tag-${r.status}">${r.status}</span>
+            ${r.recommendation?`<span style="font-size:0.72rem;font-weight:500">${r.recommendation}</span>`:''}
+          </div>
+        </div>
+        ${days!==null?`<div class="due-text ${days<0?'due-overdue':''}">${days<0?'Overdue':days+'d'}</div>`:''}
+      </div>`;}).join('');
+  } catch(e){ console.error(e); }
+}
+
+// ── Upload ──
+function openUploadModal(){ document.getElementById('upload-modal').classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function updateFileName(inputId,labelId,multi=false){
+  const files=document.getElementById(inputId).files;
+  document.getElementById(labelId).textContent=multi?`${files.length} file(s) selected`:files[0]?.name||'No file selected';
+}
+
+async function uploadPaper() {
+  const title=document.getElementById('up-title').value.trim();
+  const file=document.getElementById('up-file').files[0];
+  if(!title){ document.getElementById('upload-error').textContent='Title is required'; return; }
+  if(!file){ document.getElementById('upload-error').textContent='Please select a PDF file'; return; }
+  const btn=document.getElementById('upload-btn');
+  btn.textContent='Uploading & extracting text...'; btn.disabled=true;
+  try {
+    const fd=new FormData();
+    fd.append('title',title); fd.append('authors',document.getElementById('up-authors').value);
+    fd.append('journal',document.getElementById('up-journal').value);
+    fd.append('paper_type',document.getElementById('up-type').value);
+    fd.append('due_date',document.getElementById('up-due').value);
+    fd.append('file',file);
+    const suppFiles=document.getElementById('up-supp').files;
+    for(const sf of suppFiles) fd.append('supp_files',sf);
+    const r=await api('POST','/papers/upload',fd,true);
+    closeModal('upload-modal');
+    showToast('Paper uploaded! Opening review editor...');
+    loadPapers(); openPaper(r.id);
+  } catch(e){ document.getElementById('upload-error').textContent=e.message; }
+  finally{ btn.textContent='Upload & Analyze with Claude →'; btn.disabled=false; }
+}
+
+// ── Students ──
+async function loadStudents() {
+  try {
+    const students=await api('GET','/students/');
+    const el=document.getElementById('students-list');
+    if(!students?.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">🎓</span><div class="empty-text">No students yet</div><div class="empty-sub">Add your first student to track their progress</div></div>`; return; }
+    el.innerHTML=students.map(s=>`
+      <div class="student-card">
+        <div class="student-header">
+          <div class="student-avatar">${s.name[0]}</div>
+          <div style="flex:1">
+            <div class="student-name">${s.name}</div>
+            <div class="student-prog">${s.program} · Year ${s.year} · ${s.thesis_title||'No thesis title'}</div>
+          </div>
+          <div style="display:flex;gap:0.4rem">
+            <button class="btn btn-secondary btn-sm" onclick="generateFollowup(${s.id})">✉️ Follow-up</button>
+            <button class="btn btn-secondary btn-sm" onclick="editStudent(${JSON.stringify(s).replace(/"/g,'&quot;')})">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">🗑</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+          <span style="font-size:0.75rem;color:var(--muted)">Progress</span>
+          <div class="progress-bar" style="flex:1;margin:0"><div class="progress-fill" style="width:${s.progress_percent}%"></div></div>
+          <span style="font-size:0.75rem;font-weight:600">${s.progress_percent}%</span>
+        </div>
+        ${s.last_meeting?`<div style="font-size:0.72rem;color:var(--muted)">Last meeting: ${new Date(s.last_meeting).toLocaleDateString()}</div>`:'<div style="font-size:0.72rem;color:var(--danger)">No meeting recorded</div>'}
+        ${s.notes?`<div style="font-size:0.78rem;color:var(--ink);margin-top:0.4rem;font-style:italic">${s.notes}</div>`:''}
+        ${s.milestones?.length?`<div style="margin-top:0.75rem"><div style="font-size:0.72rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem">MILESTONES</div>
+          ${s.milestones.map(m=>`<div class="milestone-item">
+            <div class="milestone-check ${m.completed?'done':''}" onclick="toggleMilestone(${s.id},${m.id},${!m.completed})">${m.completed?'✓':''}</div>
+            <span style="${m.completed?'text-decoration:line-through;color:var(--muted)':''}">${m.title}</span>
+            ${m.due_date?`<span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">${new Date(m.due_date).toLocaleDateString()}</span>`:''}
+          </div>`).join('')}</div>`:''}
+        <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="addMilestone(${s.id})">+ Add Milestone</button>
+      </div>`).join('');
+  } catch(e){ console.error(e); }
+}
+
+function openAddStudentModal(){
+  document.getElementById('student-modal-title').textContent='Add Student';
+  document.getElementById('student-edit-id').value='';
+  ['st-name','st-email','st-thesis','st-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('st-program').value='PhD';
+  document.getElementById('st-year').value=1;
+  document.getElementById('st-progress').value=0;
+  document.getElementById('st-last-meeting').value='';
+  document.getElementById('st-next-meeting').value='';
+  document.getElementById('student-modal').classList.add('open');
+}
+
+function editStudent(s){
+  document.getElementById('student-modal-title').textContent='Edit Student';
+  document.getElementById('student-edit-id').value=s.id;
+  document.getElementById('st-name').value=s.name||'';
+  document.getElementById('st-email').value=s.email||'';
+  document.getElementById('st-program').value=s.program||'PhD';
+  document.getElementById('st-year').value=s.year||1;
+  document.getElementById('st-thesis').value=s.thesis_title||'';
+  document.getElementById('st-progress').value=s.progress_percent||0;
+  document.getElementById('st-notes').value=s.notes||'';
+  document.getElementById('st-last-meeting').value=s.last_meeting?s.last_meeting.split('T')[0]:'';
+  document.getElementById('st-next-meeting').value=s.next_meeting?s.next_meeting.split('T')[0]:'';
+  document.getElementById('student-modal').classList.add('open');
+}
+
+async function saveStudent(){
+  const id=document.getElementById('student-edit-id').value;
+  const body={
+    name:document.getElementById('st-name').value,
+    email:document.getElementById('st-email').value,
+    program:document.getElementById('st-program').value,
+    year:parseInt(document.getElementById('st-year').value),
+    thesis_title:document.getElementById('st-thesis').value,
+    progress_percent:parseInt(document.getElementById('st-progress').value),
+    notes:document.getElementById('st-notes').value,
+    last_meeting:document.getElementById('st-last-meeting').value,
+    next_meeting:document.getElementById('st-next-meeting').value
+  };
+  try {
+    if(id) await api('PUT',`/students/${id}`,body);
+    else await api('POST','/students/',body);
+    closeModal('student-modal'); loadStudents(); showToast('Student saved!');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+async function deleteStudent(id){
+  if(!confirm('Delete this student?')) return;
+  await api('DELETE',`/students/${id}`); loadStudents(); showToast('Student deleted');
+}
+
+async function generateFollowup(id){
+  showToast('Generating follow-up email with Claude...');
+  try {
+    const r=await api('POST',`/students/${id}/followup`);
+    document.getElementById('followup-text').value=r.email;
+    document.getElementById('followup-modal').classList.add('open');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+function copyFollowup(){ navigator.clipboard.writeText(document.getElementById('followup-text').value); showToast('Copied!'); }
+
+async function addMilestone(studentId){
+  const title=prompt('Milestone title:'); if(!title) return;
+  const due=prompt('Due date (YYYY-MM-DD):');
+  await api('POST',`/students/${studentId}/milestones`,{title,due_date:due});
+  loadStudents();
+}
+
+async function toggleMilestone(studentId,milestoneId,completed){
+  await api('PUT',`/students/${studentId}/milestones/${milestoneId}`,{completed});
+  loadStudents();
+}
+
+// ── Grants ──
+async function loadGrants(){
+  try {
+    const grants=await api('GET','/grants/');
+    const el=document.getElementById('grants-list');
+    if(!grants?.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">💰</span><div class="empty-text">No grants yet</div><div class="empty-sub">Add grants or find opportunities with AI</div></div>`; return; }
+    const now=new Date();
+    el.innerHTML=grants.map(g=>{
+      const days=g.deadline?Math.ceil((new Date(g.deadline)-now)/86400000):null;
+      return `<div class="grant-card">
+        <div class="grant-header">
+          <span class="agency-badge">${g.agency}</span>
+          <div style="flex:1">
+            <div class="grant-title">${g.title}</div>
+            <div class="grant-meta">${g.program||''} ${g.amount?'· '+g.amount:''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end">
+            ${days!==null?`<div class="due-text ${days<=30?'due-overdue':''}">${days<0?'Deadline passed':days+'d left'}</div>`:''}
+            <select class="grant-status-select" onchange="updateGrantStatus(${g.id},this.value)">
+              ${['identified','drafting','submitted','awarded','rejected'].map(s=>`<option ${g.status===s?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        ${g.description?`<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">${g.description.substring(0,150)}...</div>`:''}
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="openGrantWriter(${g.id},'${g.title.replace(/'/g,"\\'")}')">✨ Write with Claude</button>
+          ${g.url?`<a href="${g.url}" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">🔗 Link</a>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteGrant(${g.id})">🗑</button>
+        </div>
+        ${Object.keys(g.draft_content||{}).length?`<div style="margin-top:0.5rem;font-size:0.7rem;color:var(--success)">✓ Drafted: ${Object.keys(g.draft_content).join(', ')}</div>`:''}
+      </div>`;}).join('');
+  } catch(e){ console.error(e); }
+}
+
+function openAddGrantModal(){ document.getElementById('grant-modal').classList.add('open'); }
+
+async function saveGrant(){
+  try {
+    await api('POST','/grants/',{
+      title:document.getElementById('gr-title').value,
+      agency:document.getElementById('gr-agency').value,
+      program:document.getElementById('gr-program').value,
+      deadline:document.getElementById('gr-deadline').value,
+      amount:document.getElementById('gr-amount').value,
+      url:document.getElementById('gr-url').value,
+      description:document.getElementById('gr-desc').value,
+    });
+    closeModal('grant-modal'); loadGrants(); showToast('Grant added!');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+async function updateGrantStatus(id,status){
+  await api('PUT',`/grants/${id}/status`,{status}); showToast('Status updated');
+}
+
+async function deleteGrant(id){
+  if(!confirm('Delete this grant?')) return;
+  await api('DELETE',`/grants/${id}`); loadGrants(); showToast('Deleted');
+}
+
+async function findOpportunities(){
+  const profile=prompt('Describe your research (e.g. "statistical genetics, Mendelian randomization, cardiovascular epidemiology at McGill"):','');
+  if(!profile) return;
+  showToast('Finding grant opportunities with Claude...');
+  try {
+    await api('POST','/grants/find-opportunities',{profile});
+    loadGrants(); showToast('Opportunities added to your list!');
+  } catch(e){ showToast(e.message,'error'); }
+}
+
+function openGrantWriter(grantId,title){
+  currentGrantId=grantId;
+  document.getElementById('grant-writer-title').textContent=`✨ Grant Writing Studio: ${title.substring(0,40)}`;
+  document.getElementById('grant-output').style.display='none';
+  document.getElementById('grant-existing').value='';
+  document.getElementById('grant-writer-modal').classList.add('open');
+}
+
+function selectGrantSection(section,el){
+  selectedGrantSection=section;
+  document.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function writeGrantSection(){
+  const profile=document.getElementById('grant-profile').value;
+  const existing=document.getElementById('grant-existing').value;
+  const btn=document.getElementById('grant-write-btn');
+  btn.textContent='✨ Claude is writing...'; btn.disabled=true;
+  document.getElementById('grant-writer-error').textContent='';
+  try {
+    const r=await api('POST',`/grants/${currentGrantId}/write`,{section:selectedGrantSection,profile,existing});
+    document.getElementById('grant-output-text').value=r.content;
+    document.getElementById('grant-output').style.display='block';
+    showToast('Section written!');
+  } catch(e){ document.getElementById('grant-writer-error').textContent=e.message; }
+  finally{ btn.textContent='✨ Write with Claude →'; btn.disabled=false; }
+}
+
+function copyGrantOutput(){ navigator.clipboard.writeText(document.getElementById('grant-output-text').value); showToast('Copied to clipboard!'); }
+
+// ── Utilities ──
+function formatType(t){ return {journal_review:'Journal Review',thesis_phd:'PhD Thesis',thesis_msc:'MSc Thesis',grant:'Grant Review'}[t]||t; }
+
+function showToast(msg,type='success'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show'+(type==='error'?' error':'');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ── Start ──
+if(token && currentUser) initApp();
+
+// Create demo account on first load if API is available
+async function ensureDemoAccount(){
+  try {
+    await api('POST','/auth/register',{email:'demo@mcgill.ca',password:'demo1234',name:'Dr. Afshin Rahmani',role:'researcher',institution:'McGill University',department:'Epidemiology & Biostatistics'});
+  } catch(e){ /* already exists */ }
+}
+ensureDemoAccount();
+</script>
+</body>
+</html>
