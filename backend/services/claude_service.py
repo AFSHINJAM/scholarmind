@@ -1,8 +1,34 @@
-import anthropic
 import os
 import json
 
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+
+
+def get_ai_response(system: str, prompt: str, max_tokens: int = 2000) -> str:
+    """Single function to call AI - uses Gemini if available, else Anthropic"""
+    if GEMINI_API_KEY:
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction=system
+        )
+        response = model.generate_content(prompt)
+        return response.text
+    elif ANTHROPIC_API_KEY:
+        import anthropic
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=max_tokens,
+            system=system,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.content[0].text
+    else:
+        raise Exception("No AI API key configured. Set GEMINI_API_KEY or ANTHROPIC_API_KEY.")
+
 
 def extract_text_from_file(file_path: str, filename: str) -> str:
     """Extract text from any file type"""
@@ -19,13 +45,12 @@ def extract_text_from_file(file_path: str, filename: str) -> str:
             doc = Document(file_path)
             text = "\n".join(p.text for p in doc.paragraphs)
             return text[:150000]
-        elif fn.endswith(('.txt','.md','.r','.py','.csv','.rmd','.qmd',
-                          '.tex','.html','.sh','.json','.xml','.log',
-                          '.R','.Rmd','.Qmd')):
+        elif fn.endswith(('.txt', '.md', '.r', '.R', '.py', '.csv', '.rmd',
+                          '.Rmd', '.qmd', '.tex', '.html', '.sh', '.json',
+                          '.xml', '.log')):
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 return f.read()[:150000]
         else:
-            # try plain text first
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()[:150000]
@@ -33,7 +58,6 @@ def extract_text_from_file(file_path: str, filename: str) -> str:
                     return content
             except:
                 pass
-            # try pdf parser as fallback
             try:
                 import fitz
                 doc = fitz.open(file_path)
@@ -47,12 +71,13 @@ def extract_text_from_file(file_path: str, filename: str) -> str:
     except Exception as e:
         return f"Could not extract text from {filename}: {str(e)}"
 
-# keep backward compat
+
 def extract_text_from_pdf(file_path: str) -> str:
     return extract_text_from_file(file_path, file_path)
 
+
 def chat_with_paper(paper_text: str, messages: list, user_question: str, paper_title: str = "") -> str:
-    system = f"""You are ScholarMind, an expert academic AI assistant powered by Claude.
+    system = f"""You are ScholarMind, an expert academic AI assistant.
 You are helping a researcher or professor analyze and understand an academic paper or document.
 
 Paper title: {paper_title}
@@ -67,21 +92,17 @@ Your role:
 - Be direct and academically rigorous
 - Always ground your answers in the actual document content above"""
 
-    formatted = []
-    for m in messages[-10:]:
-        formatted.append({"role": m["role"], "content": m["content"]})
-    formatted.append({"role": "user", "content": user_question})
+    history_text = ""
+    for m in messages[-6:]:
+        role = "User" if m["role"] == "user" else "Assistant"
+        history_text += f"{role}: {m['content']}\n\n"
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1500,
-        system=system,
-        messages=formatted
-    )
-    return response.content[0].text
+    prompt = f"{history_text}User: {user_question}"
+    return get_ai_response(system, prompt, max_tokens=1500)
+
 
 def analyze_paper_for_review(paper_text: str, supp_text: str, paper_type: str, journal: str = "") -> dict:
-    system = """You are ScholarMind, an expert academic peer reviewer powered by Claude.
+    system = """You are ScholarMind, an expert academic peer reviewer.
 You have deep expertise in biomedical research, statistics, epidemiology, genetics, and scientific methodology.
 You produce rigorous, constructive, and balanced peer reviews."""
 
@@ -96,7 +117,7 @@ MAIN DOCUMENT:
 SUPPLEMENTARY MATERIAL:
 {supp_text[:20000] if supp_text else "None provided"}
 
-Produce a JSON response with EXACTLY this structure:
+Produce a JSON response with EXACTLY this structure (no extra text, just JSON):
 {{
   "summary": "2-3 paragraph summary of what the paper does, its main findings, and overall assessment",
   "major_concerns": "Numbered list of major concerns that must be addressed. Be specific.",
@@ -117,28 +138,20 @@ Produce a JSON response with EXACTLY this structure:
     {{"item": "Appropriate statistical tests", "status": "warn", "note": ""}},
     {{"item": "Conclusions match results", "status": "pass", "note": ""}},
     {{"item": "Conflict of interest declared", "status": "pass", "note": ""}},
-    {{"item": "Data availability statement", "status": "warn", "note": "Partial"}},
+    {{"item": "Data availability statement", "status": "warn", "note": ""}},
     {{"item": "Ethics approval stated", "status": "pass", "note": ""}}
   ],
   "suggested_additional_analyses": "List of analyses that would strengthen the paper"
-}}
+}}"""
 
-Be specific, rigorous, and constructive."""
-
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    text = response.content[0].text
+    text = get_ai_response(system, prompt, max_tokens=4000)
     try:
         start = text.find('{')
         end = text.rfind('}') + 1
         return json.loads(text[start:end])
     except:
         return {
-            "summary": text[:500],
+            "summary": text[:800] if text else "Analysis complete",
             "major_concerns": "See summary above",
             "minor_concerns": "",
             "strengths": "",
@@ -152,7 +165,12 @@ Be specific, rigorous, and constructive."""
             "suggested_additional_analyses": ""
         }
 
+
 def generate_grant_section(section: str, research_profile: str, grant_info: dict, existing_content: str = "") -> str:
+    system = """You are ScholarMind, an expert academic grant writing assistant.
+You have helped researchers win millions in funding from CIHR, NSERC, NIH, and other agencies.
+You write compelling, specific, scientifically rigorous grant content."""
+
     prompt = f"""Write the '{section}' section for this grant application.
 
 Grant details:
@@ -169,14 +187,11 @@ Write a compelling, specific, well-structured {section} section.
 Use strong action verbs. Be specific about methods and impact.
 Tailor language to {grant_info.get('agency', 'the funding agency')} priorities."""
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=2000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.content[0].text
+    return get_ai_response(system, prompt, max_tokens=2000)
+
 
 def generate_student_followup(student: dict, supervisor_name: str) -> str:
+    system = "You are an academic writing assistant helping professors communicate with their students."
     prompt = f"""Write a brief, warm but professional follow-up email from Prof. {supervisor_name} to their student.
 
 Student: {student['name']}
@@ -189,19 +204,16 @@ Notes: {student.get('notes', '')}
 Write a 3-4 sentence email checking in on progress, asking about blockers, and suggesting next steps.
 Be warm, encouraging, and specific."""
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=300,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.content[0].text
+    return get_ai_response(system, prompt, max_tokens=300)
+
 
 def get_grant_opportunities(research_profile: str) -> list:
+    system = "You are an expert in academic research funding and grant opportunities."
     prompt = f"""Based on this researcher's profile, suggest 6 realistic grant opportunities.
 
 Profile: {research_profile}
 
-Return a JSON array:
+Return ONLY a JSON array with no extra text:
 [
   {{
     "title": "Grant program name",
@@ -216,12 +228,7 @@ Return a JSON array:
 
 Include realistic Canadian (CIHR, NSERC, FRQS) and international (NIH, Wellcome) opportunities."""
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=2000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    text = response.content[0].text
+    text = get_ai_response(system, prompt, max_tokens=2000)
     try:
         start = text.find('[')
         end = text.rfind(']') + 1

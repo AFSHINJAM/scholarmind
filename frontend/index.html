@@ -3,120 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScholarMind</title>
+<title>ScholarMind — AI Agent for Academic Excellence</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0d0d0d;--paper:#f5f0e8;--cream:#faf7f2;--gold:#c9a84c;--gold-light:#e8d5a3;--teal:#1a4a4a;--teal-mid:#2d6b6b;--teal-light:#4a9b9b;--rust:#8b3a2a;--muted:#6b6560;--border:#ddd8ce;--shadow:rgba(13,13,13,0.08);--success:#28a745;--warning:#e67e22;--danger:#dc3545}
+:root{--ink:#0d0d0d;--paper:#f5f0e8;--cream:#faf7f2;--gold:#c9a84c;--gold-light:#e8d5a3;--teal:#1a4a4a;--teal-mid:#2d6b6b;--teal-light:#4a9b9b;--muted:#6b6560;--border:#ddd8ce;--shadow:rgba(13,13,13,0.08);--success:#28a745;--warning:#e67e22;--danger:#dc3545}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
-/* AUTH */
-#auth-view{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--teal) 0%,#0d2e2e 100%)}
-.auth-card{background:white;border-radius:16px;padding:2.5rem;width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-.auth-logo{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--teal);text-align:center;margin-bottom:0.25rem}
-.auth-logo span{color:var(--gold)}
-.auth-sub{text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:2rem}
-.auth-tabs{display:flex;border:1.5px solid var(--border);border-radius:8px;margin-bottom:1.5rem;overflow:hidden}
-.auth-tab{flex:1;padding:0.6rem;text-align:center;cursor:pointer;font-size:0.85rem;font-weight:500;color:var(--muted);background:white;border:none;transition:all 0.2s}
-.auth-tab.active{background:var(--teal);color:white}
-.form-group{margin-bottom:1rem}
-.form-label{display:block;font-size:0.78rem;font-weight:600;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.04em}
-.form-input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.15s;background:var(--cream)}
-.form-input:focus{border-color:var(--teal);background:white}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
-.btn{padding:0.75rem 1.2rem;border-radius:6px;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.btn-primary{background:var(--teal);color:white;width:100%}
-.btn-primary:hover{background:var(--teal-mid)}
-.btn-secondary{background:white;color:var(--teal);border:1.5px solid var(--teal)}
-.btn-secondary:hover{background:var(--teal);color:white}
-.btn-danger{background:var(--danger);color:white}
-.btn-sm{padding:0.4rem 0.8rem;font-size:0.8rem}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+
+/* ── LANDING ── */
+#landing{display:block}
+#app{display:none}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 4rem;background:rgba(245,240,232,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--teal);display:flex;align-items:center;gap:0.4rem}
+.nav-logo span{color:var(--gold)}
+.nav-logo small{font-size:0.55rem;background:var(--teal);color:white;padding:0.1rem 0.4rem;border-radius:3px;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:0.05em;margin-left:0.3rem;vertical-align:middle}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:0.875rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:var(--teal)}
+.nav-actions{display:flex;gap:0.75rem;align-items:center}
+.btn{padding:0.6rem 1.2rem;border-radius:5px;font-size:0.875rem;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem}
+.btn-outline{border:1.5px solid var(--teal);color:var(--teal);background:transparent}
+.btn-outline:hover{background:var(--teal);color:white}
+.btn-primary{background:var(--teal);color:white;box-shadow:0 4px 16px rgba(26,74,74,0.25)}
+.btn-primary:hover{background:var(--teal-mid);transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,74,74,0.35)}
 .btn-gold{background:var(--gold);color:var(--ink)}
 .btn-gold:hover{background:#b8962e}
-.error-msg{color:var(--danger);font-size:0.82rem;margin-top:0.5rem;text-align:center}
-/* APP LAYOUT */
-#app-view{display:none;min-height:100vh}
-.layout{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
-/* SIDEBAR */
-.sidebar{background:var(--teal);color:white;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;padding:1.2rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.1)}
+.btn-sm{padding:0.4rem 0.8rem;font-size:0.8rem}
+.btn-danger{background:var(--danger);color:white}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 4rem 5rem;position:relative;overflow:hidden;background:linear-gradient(135deg,#f5f0e8 0%,#e8f4f4 100%)}
+.hero-bg{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a4a4a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-content{position:relative;z-index:1;max-width:620px}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(26,74,74,0.1);border:1px solid rgba(26,74,74,0.2);color:var(--teal);padding:0.4rem 1rem;border-radius:20px;font-size:0.78rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-badge::before{content:'';width:7px;height:7px;background:var(--teal-light);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,5vw,4rem);font-weight:900;line-height:1.08;letter-spacing:-0.03em;margin-bottom:1.5rem;color:var(--ink)}
+.hero h1 em{font-style:italic;color:var(--teal)}
+.hero h1 .highlight{position:relative;display:inline-block}
+.hero h1 .highlight::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px;background:var(--gold);border-radius:2px}
+.hero-sub{font-size:1.05rem;line-height:1.75;color:var(--muted);max-width:500px;margin-bottom:2rem}
+.hero-actions{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:3rem}
+.hero-social-proof{display:flex;align-items:center;gap:1rem;font-size:0.8rem;color:var(--muted)}
+.hero-avatars{display:flex}
+.hero-avatar{width:30px;height:30px;border-radius:50%;background:var(--teal);border:2px solid white;margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:white}
+.hero-avatar:first-child{margin-left:0}
+.hero-visual{position:absolute;right:4rem;top:50%;transform:translateY(-50%);width:440px;z-index:1}
+.mockup-card{background:white;border-radius:14px;box-shadow:0 24px 80px rgba(13,13,13,0.15),0 0 0 1px var(--border);overflow:hidden}
+.mockup-bar{background:var(--teal);padding:0.75rem 1rem;display:flex;align-items:center;gap:0.5rem}
+.mockup-dots{display:flex;gap:5px}
+.mockup-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.25)}
+.mockup-label{color:rgba(255,255,255,0.7);font-size:0.7rem;font-family:'DM Mono',monospace;margin-left:auto}
+.mockup-body{padding:1rem}
+.mockup-task{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.6rem;border-radius:6px;border:1px solid var(--border);margin-bottom:0.4rem;background:var(--cream);font-size:0.72rem}
+.mockup-task-icon{font-size:0.85rem}
+.mockup-task-text{flex:1;font-weight:500;color:var(--ink)}
+.mockup-task-badge{font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:3px;font-weight:600}
+.badge-red{background:rgba(220,53,69,0.1);color:var(--danger)}
+.badge-orange{background:rgba(230,126,34,0.1);color:var(--warning)}
+.badge-green{background:rgba(40,167,69,0.1);color:var(--success)}
+.mockup-ai{background:rgba(26,74,74,0.05);border:1px solid rgba(26,74,74,0.1);border-radius:6px;padding:0.6rem;margin-top:0.6rem;font-size:0.68rem;line-height:1.5;color:var(--ink)}
+.mockup-ai strong{color:var(--teal);display:block;margin-bottom:2px;font-size:0.62rem}
+.float-tag{position:absolute;background:white;border:1px solid var(--border);border-radius:8px;padding:0.4rem 0.7rem;font-size:0.68rem;font-weight:500;box-shadow:0 4px 16px var(--shadow);white-space:nowrap;display:flex;align-items:center;gap:0.35rem}
+
+/* STATS BAR */
+.stats-bar{background:var(--teal);padding:1.5rem 4rem;display:flex;justify-content:space-around;align-items:center}
+.stat-item{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:white;display:block}
+.stat-label{font-size:0.75rem;color:rgba(255,255,255,0.6);font-weight:500}
+
+/* HOW IT WORKS */
+.section{padding:5rem 4rem}
+.section-center{text-align:center}
+.section-badge{display:inline-block;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;line-height:1.15;letter-spacing:-0.02em;color:var(--ink);margin-bottom:1rem}
+.section-sub{font-size:1rem;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto}
+
+/* AGENT FEATURES */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.agent-card{background:white;border-radius:12px;padding:1.5rem;border:1px solid var(--border);transition:all 0.2s;position:relative;overflow:hidden}
+.agent-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px var(--shadow);border-color:var(--teal)}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);opacity:0;transition:opacity 0.2s}
+.agent-card:hover::before{opacity:1}
+.agent-icon{font-size:2rem;margin-bottom:0.75rem;display:block}
+.agent-card h3{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:0.5rem}
+.agent-card p{font-size:0.82rem;color:var(--muted);line-height:1.6}
+.agent-tag{display:inline-block;font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:3px;margin-top:0.75rem;background:rgba(26,74,74,0.08);color:var(--teal)}
+
+/* WORKFLOW */
+.workflow-section{background:var(--teal);color:white;padding:5rem 4rem}
+.workflow-section .section-title{color:white}
+.workflow-section .section-sub{color:rgba(255,255,255,0.7)}
+.workflow-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem;position:relative}
+.workflow-steps::before{content:'';position:absolute;top:28px;left:12%;right:12%;height:1px;background:rgba(255,255,255,0.15)}
+.workflow-step{text-align:center;position:relative}
+.workflow-num{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin:0 auto 1rem;position:relative;z-index:1}
+.workflow-step h4{font-size:0.9rem;font-weight:600;color:white;margin-bottom:0.4rem}
+.workflow-step p{font-size:0.78rem;color:rgba(255,255,255,0.6);line-height:1.6}
+
+/* VS TABLE */
+.vs-section{background:white;padding:5rem 4rem}
+.vs-table{width:100%;max-width:800px;margin:2rem auto 0;border-collapse:collapse}
+.vs-table th{padding:0.75rem 1rem;font-size:0.78rem;font-weight:600;text-align:left;border-bottom:2px solid var(--border);color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.vs-table th:last-child,.vs-table th:nth-child(2){text-align:center}
+.vs-table td{padding:0.75rem 1rem;font-size:0.85rem;border-bottom:1px solid var(--border);color:var(--ink)}
+.vs-table td:last-child,.vs-table td:nth-child(2){text-align:center}
+.vs-table tr:hover td{background:var(--cream)}
+.vs-check{color:var(--success);font-size:1rem}
+.vs-cross{color:var(--danger);font-size:1rem}
+.vs-highlight td{font-weight:600}
+.vs-highlight td:last-child{color:var(--teal)}
+
+/* PRICING */
+.pricing-section{background:var(--cream);padding:5rem 4rem}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:900px;margin:2.5rem auto 0}
+.pricing-card{background:white;border-radius:12px;padding:2rem;border:1.5px solid var(--border);position:relative;transition:all 0.2s}
+.pricing-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px var(--shadow)}
+.pricing-card.featured{border-color:var(--teal);background:var(--teal);color:white}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.25rem 0.75rem;border-radius:20px}
+.pricing-tier{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem}
+.pricing-card.featured .pricing-tier{color:var(--gold-light)}
+.pricing-price{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700;color:var(--ink);line-height:1}
+.pricing-card.featured .pricing-price{color:white}
+.pricing-period{font-size:0.78rem;color:var(--muted);margin-bottom:1.5rem}
+.pricing-card.featured .pricing-period{color:rgba(255,255,255,0.6)}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:0.5rem;margin-bottom:2rem}
+.pricing-features li{font-size:0.83rem;display:flex;align-items:flex-start;gap:0.5rem}
+.pricing-features li::before{content:'✓';font-weight:700;flex-shrink:0;margin-top:1px}
+.pricing-card:not(.featured) .pricing-features li::before{color:var(--teal)}
+.pricing-card.featured .pricing-features li{color:rgba(255,255,255,0.85)}
+.pricing-card.featured .pricing-features li::before{color:var(--gold-light)}
+.pricing-btn{display:block;text-align:center;padding:0.75rem;border-radius:6px;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.pricing-btn-outline{border:1.5px solid var(--teal);color:var(--teal);background:white}
+.pricing-btn-outline:hover{background:var(--teal);color:white}
+.pricing-btn-gold{background:var(--gold);color:var(--ink)}
+.pricing-btn-gold:hover{background:#b8962e}
+.pricing-btn-white{background:white;color:var(--teal)}
+.pricing-btn-white:hover{background:var(--cream)}
+
+/* TESTIMONIALS */
+.testimonials-section{background:white;padding:5rem 4rem}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem}
+.testimonial-card{background:var(--cream);border-radius:12px;padding:1.5rem;border:1px solid var(--border)}
+.testimonial-quote{font-family:'Playfair Display',serif;font-size:2.5rem;color:var(--gold);line-height:1;margin-bottom:0.5rem}
+.testimonial-text{font-size:0.88rem;color:var(--ink);line-height:1.7;margin-bottom:1rem;font-style:italic}
+.testimonial-author{display:flex;align-items:center;gap:0.75rem}
+.t-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:white;flex-shrink:0}
+.t-name{font-size:0.82rem;font-weight:600;color:var(--ink)}
+.t-role{font-size:0.72rem;color:var(--muted)}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--teal) 0%,#0d2e2e 100%);padding:6rem 4rem;text-align:center;color:white}
+.cta-section .section-title{color:white;max-width:600px;margin:0 auto 1rem}
+.cta-section .section-sub{color:rgba(255,255,255,0.7);margin:0 auto 2.5rem}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,0.5);padding:3rem 4rem;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem}
+.footer-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:white;margin-bottom:0.75rem}
+.footer-logo span{color:var(--gold)}
+.footer-tagline{font-size:0.8rem;line-height:1.6;max-width:220px}
+.footer-col h5{font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:white;margin-bottom:1rem}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
+.footer-col a{color:rgba(255,255,255,0.45);font-size:0.82rem;text-decoration:none;transition:color 0.2s}
+.footer-col a:hover{color:white}
+.footer-bottom{background:#060606;color:rgba(255,255,255,0.25);padding:1rem 4rem;font-size:0.75rem;display:flex;justify-content:space-between}
+
+/* ── APP ── */
+.app-layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--teal);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;padding:1.2rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.1);color:white}
 .sidebar-logo span{color:var(--gold)}
+.sidebar-logo small{font-size:0.5rem;background:var(--gold);color:var(--ink);padding:0.1rem 0.35rem;border-radius:2px;font-family:'DM Sans',sans-serif;font-weight:700;margin-left:0.3rem}
 .nav-section{padding:0.75rem 0.75rem 0;margin-bottom:0.5rem}
-.nav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 0.5rem;margin-bottom:0.3rem}
-.nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.55rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.84rem;color:rgba(255,255,255,0.7);transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
+.nav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:0 0.5rem;margin-bottom:0.3rem}
+.nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.55rem 0.75rem;border-radius:6px;cursor:pointer;font-size:0.84rem;color:rgba(255,255,255,0.65);transition:all 0.15s;border:none;background:none;width:100%;text-align:left}
 .nav-item:hover{background:rgba(255,255,255,0.08);color:white}
 .nav-item.active{background:rgba(255,255,255,0.16);color:white;font-weight:500}
-.nav-badge{margin-left:auto;background:var(--gold);color:var(--ink);font-size:0.62rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--ink);font-size:0.6rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center}
 .sidebar-bottom{margin-top:auto;padding:1rem 0.75rem;border-top:1px solid rgba(255,255,255,0.1)}
 .user-chip{display:flex;align-items:center;gap:0.6rem;padding:0.5rem}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--ink);flex-shrink:0}
-.user-info .name{font-size:0.82rem;font-weight:600;color:white}
-.user-info .role{font-size:0.68rem;color:rgba(255,255,255,0.5)}
-.logout-btn{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.75rem;border-radius:5px;cursor:pointer;font-size:0.78rem;color:rgba(255,255,255,0.5);border:none;background:none;width:100%;margin-top:0.3rem;transition:color 0.15s}
+.user-name{font-size:0.82rem;font-weight:600;color:white}
+.user-role{font-size:0.68rem;color:rgba(255,255,255,0.45)}
+.logout-btn{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.75rem;border-radius:5px;cursor:pointer;font-size:0.78rem;color:rgba(255,255,255,0.45);border:none;background:none;width:100%;margin-top:0.3rem;transition:color 0.15s}
 .logout-btn:hover{color:white}
-/* MAIN */
 .main{background:var(--cream);overflow:auto}
 .topbar{background:white;border-bottom:1px solid var(--border);padding:0.85rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .topbar-title{font-size:1rem;font-weight:600;color:var(--ink)}
 .topbar-actions{display:flex;gap:0.6rem;align-items:center}
 .content{padding:1.5rem 2rem}
-/* PANELS */
 .panel{display:none}
 .panel.active{display:block}
+
 /* CARDS */
 .card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem}
-.card-title{font-size:0.88rem;font-weight:600;color:var(--ink);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem}
-/* GRID */
+.card-title{font-size:0.88rem;font-weight:600;color:var(--ink);margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
-/* STAT CARDS */
 .stat-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;text-align:center}
-.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--teal);display:block}
-.stat-label{font-size:0.75rem;color:var(--muted);margin-top:0.2rem}
+.stat-num-lg{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--teal);display:block}
+.stat-label-sm{font-size:0.75rem;color:var(--muted);margin-top:0.2rem}
+
 /* TASK ITEMS */
-.task-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.8rem;border-radius:8px;border:1px solid var(--border);margin-bottom:0.5rem;background:white}
-.task-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
-.task-text{flex:1}
+.task-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.8rem;border-radius:8px;border:1px solid var(--border);margin-bottom:0.5rem;background:white;cursor:pointer;transition:all 0.15s}
+.task-item:hover{border-color:var(--teal)}
 .task-title{font-size:0.85rem;font-weight:500;color:var(--ink)}
 .task-sub{font-size:0.72rem;color:var(--muted)}
 .priority-high{border-left:3px solid var(--danger)}
 .priority-medium{border-left:3px solid var(--warning)}
-.priority-low{border-left:3px solid var(--success)}
+
 /* PAPER LIST */
 .paper-item{background:white;border-radius:10px;border:1px solid var(--border);padding:1rem 1.2rem;margin-bottom:0.6rem;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:1rem}
 .paper-item:hover{border-color:var(--teal);box-shadow:0 3px 12px var(--shadow)}
 .paper-info{flex:1;min-width:0}
-.paper-title-text{font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.paper-title-txt{font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .paper-meta-row{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
 .tag{font-size:0.65rem;font-weight:600;padding:0.2rem 0.5rem;border-radius:3px;text-transform:uppercase;letter-spacing:0.04em}
 .tag-journal{background:rgba(26,74,74,0.1);color:var(--teal)}
-.tag-thesis{background:rgba(201,168,76,0.15);color:#7a6020}
+.tag-thesis_phd{background:rgba(201,168,76,0.15);color:#7a6020}
+.tag-thesis_msc{background:rgba(201,168,76,0.1);color:#7a6020}
 .tag-grant{background:rgba(40,100,167,0.1);color:#1a4a8a}
 .tag-pending{background:rgba(230,126,34,0.1);color:#8a4a1a}
 .tag-in_progress{background:rgba(52,152,219,0.1);color:#1a5a8a}
 .tag-completed{background:rgba(40,167,69,0.1);color:#1a6b2a}
-.due-text{font-size:0.72rem;color:var(--muted)}
-.due-overdue{color:var(--danger);font-weight:600}
+.due-overdue{color:var(--danger);font-weight:600;font-size:0.72rem}
+.due-normal{color:var(--muted);font-size:0.72rem}
+
 /* REVIEW EDITOR */
 .review-layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem}
-.review-form .section-label{font-size:0.72rem;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.3rem}
-.review-textarea{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.83rem;resize:vertical;font-family:'DM Sans',sans-serif;outline:none;min-height:90px;background:var(--cream);transition:border 0.15s;line-height:1.6}
+.form-label{display:block;font-size:0.72rem;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem}
+.review-textarea{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.83rem;resize:vertical;font-family:'DM Sans',sans-serif;outline:none;min-height:90px;background:var(--cream);transition:border 0.15s;line-height:1.6;color:var(--ink)}
 .review-textarea:focus{border-color:var(--teal);background:white}
 .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
-.score-select{width:100%;border:1.5px solid var(--border);border-radius:5px;padding:0.4rem 0.5rem;font-size:0.82rem;outline:none;background:var(--cream);cursor:pointer}
+.score-select{width:100%;border:1.5px solid var(--border);border-radius:5px;padding:0.4rem 0.5rem;font-size:0.82rem;outline:none;background:var(--cream);cursor:pointer;color:var(--ink)}
 .score-select:focus{border-color:var(--teal)}
-/* CHECKLIST */
 .check-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;padding:0.3rem 0;border-bottom:1px solid var(--border)}
 .check-item:last-child{border-bottom:none}
 .check-pass{color:var(--success)}
 .check-warn{color:var(--warning)}
 .check-fail{color:var(--danger)}
+.score-bar-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem}
+.score-bar-label{font-size:0.72rem;color:var(--muted);width:110px;flex-shrink:0}
+.score-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;background:var(--teal);border-radius:3px}
+.score-bar-val{font-size:0.72rem;font-weight:600;color:var(--ink);width:25px;text-align:right}
+
 /* CHAT */
-.chat-layout{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;height:calc(100vh - 140px)}
-.chat-panel{background:white;border-radius:10px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.chat-panel{background:white;border-radius:10px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;height:380px}
 .chat-header{padding:0.8rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem}
 .chat-header h4{font-size:0.88rem;font-weight:600;color:var(--ink)}
-.claude-badge{background:var(--teal);color:white;font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:3px;font-weight:600;margin-left:auto}
+.claude-badge-sm{background:var(--teal);color:white;font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:3px;font-weight:600;margin-left:auto}
 .messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem}
 .msg{padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;line-height:1.55;max-width:90%}
 .msg-user{background:var(--teal);color:white;align-self:flex-end;border-radius:8px 8px 2px 8px}
@@ -124,92 +265,127 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 .msg-source{font-size:0.65rem;color:var(--gold);font-weight:600;display:block;margin-bottom:3px}
 .msg-thinking{color:var(--muted);font-style:italic}
 .chat-input-area{border-top:1px solid var(--border);padding:0.75rem;display:flex;gap:0.5rem}
-.chat-input{flex:1;border:1.5px solid var(--border);border-radius:6px;padding:0.55rem 0.75rem;font-size:0.82rem;resize:none;height:64px;font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);transition:border 0.15s}
+.chat-input{flex:1;border:1.5px solid var(--border);border-radius:6px;padding:0.55rem 0.75rem;font-size:0.82rem;resize:none;height:60px;font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);transition:border 0.15s;color:var(--ink)}
 .chat-input:focus{border-color:var(--teal);background:white}
 .chat-send{background:var(--teal);color:white;border:none;border-radius:6px;padding:0.5rem 0.85rem;cursor:pointer;font-size:0.82rem;font-weight:500;align-self:stretch;transition:background 0.15s}
 .chat-send:hover{background:var(--teal-mid)}
-/* PAPER INFO SIDEBAR */
-.paper-sidebar{display:flex;flex-direction:column;gap:0.75rem}
+
 /* STUDENTS */
 .student-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:0.75rem}
-.student-header{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem}
-.student-avatar{width:40px;height:40px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700;color:white;flex-shrink:0}
-.student-name{font-size:0.95rem;font-weight:600;color:var(--ink)}
-.student-prog{font-size:0.75rem;color:var(--muted)}
-.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0.5rem 0}
-.progress-fill{height:100%;background:var(--teal);border-radius:3px;transition:width 0.3s}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0.4rem 0}
+.progress-fill{height:100%;background:var(--teal);border-radius:3px}
 .milestone-item{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;padding:0.25rem 0}
 .milestone-check{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;transition:all 0.15s}
 .milestone-check.done{background:var(--success);border-color:var(--success);color:white}
+
 /* GRANTS */
 .grant-card{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:0.75rem}
-.grant-header{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.6rem}
-.agency-badge{background:var(--teal);color:white;font-size:0.65rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:4px;flex-shrink:0;margin-top:2px}
-.grant-title{font-size:0.9rem;font-weight:600;color:var(--ink)}
-.grant-meta{font-size:0.75rem;color:var(--muted)}
+.agency-badge{background:var(--teal);color:white;font-size:0.65rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:4px;flex-shrink:0}
+.grant-status-select{border:1px solid var(--border);border-radius:4px;padding:0.25rem 0.4rem;font-size:0.72rem;cursor:pointer;background:white;color:var(--ink)}
 .deadline-soon{color:var(--danger);font-weight:600}
-.grant-status-select{border:1px solid var(--border);border-radius:4px;padding:0.25rem 0.4rem;font-size:0.72rem;cursor:pointer;background:white}
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:white;border-radius:12px;padding:2rem;width:560px;max-height:85vh;overflow-y:auto;position:relative}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.2rem;color:var(--ink)}
-.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted)}
+
 /* GRANT WRITER */
 .grant-sections{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem}
 .section-tab{padding:0.35rem 0.7rem;border-radius:4px;font-size:0.78rem;cursor:pointer;border:1px solid var(--border);background:white;color:var(--muted);transition:all 0.15s}
 .section-tab.active{background:var(--teal);color:white;border-color:var(--teal)}
+
+/* FORMS */
+.form-input{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.15s;background:var(--cream);color:var(--ink)}
+.form-input:focus{border-color:var(--teal);background:white}
+.form-group{margin-bottom:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.form-select{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:0.65rem 0.8rem;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;background:var(--cream);cursor:pointer;color:var(--ink)}
+.form-select:focus{border-color:var(--teal)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:14px;padding:2rem;width:580px;max-height:88vh;overflow-y:auto;position:relative}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.2rem;color:var(--ink)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);line-height:1}
+.modal-close:hover{color:var(--ink)}
+.error-msg{color:var(--danger);font-size:0.82rem;margin-top:0.5rem;text-align:center}
+
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--cream);margin-bottom:0.75rem}
+.upload-zone:hover{border-color:var(--teal);background:rgba(26,74,74,0.02)}
+.upload-icon{font-size:1.8rem;display:block;margin-bottom:0.4rem}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;display:block;margin-bottom:0.75rem}
+.empty-text{font-size:0.9rem;font-weight:500;color:var(--ink);margin-bottom:0.25rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--teal);color:white;padding:0.75rem 1.2rem;border-radius:8px;font-size:0.85rem;font-weight:500;z-index:9999;transform:translateY(100px);opacity:0;transition:all 0.3s;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{background:var(--danger)}
+.toast.success{background:var(--success)}
+
 /* LOADING */
 .loading{display:inline-flex;gap:3px;align-items:center}
 .loading span{width:5px;height:5px;border-radius:50%;background:var(--teal-light);animation:bounce 1s infinite}
 .loading span:nth-child(2){animation-delay:0.2s}
 .loading span:nth-child(3){animation-delay:0.4s}
 @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-/* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;background:white;margin-bottom:1rem}
-.upload-zone:hover,.upload-zone.drag{border-color:var(--teal);background:rgba(26,74,74,0.02)}
-.upload-icon{font-size:2rem;margin-bottom:0.5rem;display:block}
-/* SCORE BARS */
-.score-bar-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem}
-.score-bar-label{font-size:0.72rem;color:var(--muted);width:120px;flex-shrink:0}
-.score-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
-.score-bar-fill{height:100%;background:var(--teal);border-radius:3px}
-.score-bar-val{font-size:0.72rem;font-weight:600;color:var(--ink);width:30px;text-align:right}
-/* EMPTY STATE */
-.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
-.empty-icon{font-size:2.5rem;display:block;margin-bottom:0.75rem}
-.empty-text{font-size:0.9rem;font-weight:500;color:var(--ink);margin-bottom:0.25rem}
-.empty-sub{font-size:0.8rem}
-/* TOAST */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--teal);color:white;padding:0.75rem 1.2rem;border-radius:8px;font-size:0.85rem;font-weight:500;z-index:9999;transform:translateY(100px);opacity:0;transition:all 0.3s}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.error{background:var(--danger)}
+
+/* AUTH */
+#auth-view{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--teal) 0%,#0d2e2e 100%)}
+.auth-card{background:white;border-radius:16px;padding:2.5rem;width:440px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.auth-logo{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--teal);text-align:center;margin-bottom:0.25rem}
+.auth-logo span{color:var(--gold)}
+.auth-sub{text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:2rem}
+.auth-tabs{display:flex;border:1.5px solid var(--border);border-radius:8px;margin-bottom:1.5rem;overflow:hidden}
+.auth-tab{flex:1;padding:0.6rem;text-align:center;cursor:pointer;font-size:0.85rem;font-weight:500;color:var(--muted);background:white;border:none;transition:all 0.2s}
+.auth-tab.active{background:var(--teal);color:white}
+
+/* PROFILE KEYWORDS */
+.keyword-grid{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem}
+.keyword-chip{padding:0.3rem 0.7rem;border-radius:20px;font-size:0.75rem;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);transition:all 0.15s}
+.keyword-chip.selected{background:var(--teal);color:white;border-color:var(--teal)}
+.keyword-chip:hover:not(.selected){border-color:var(--teal);color:var(--teal)}
+
+/* GRANT FINDER */
+.grant-opportunity{background:white;border-radius:10px;border:1px solid var(--border);padding:1.2rem;margin-bottom:0.75rem;transition:all 0.15s}
+.grant-opportunity:hover{border-color:var(--teal);box-shadow:0 3px 12px var(--shadow)}
+.grant-opp-header{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:0.5rem}
+.grant-opp-title{font-size:0.9rem;font-weight:600;color:var(--ink)}
+.grant-opp-meta{font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem}
+.grant-opp-relevance{font-size:0.78rem;color:var(--ink);line-height:1.5;margin-bottom:0.6rem;font-style:italic}
+.grant-actions{display:flex;gap:0.5rem;flex-wrap:wrap}
+
+@media(max-width:900px){
+.nav{padding:1rem 1.5rem}.nav-links{display:none}
+.hero{padding:5rem 1.5rem 3rem;flex-direction:column}.hero-visual{display:none}
+.stats-bar,.section,.workflow-section,.vs-section,.pricing-section,.testimonials-section,.cta-section{padding:3rem 1.5rem}
+.agent-grid,.workflow-steps,.pricing-grid,.testimonials-grid{grid-template-columns:1fr}
+footer{grid-template-columns:1fr 1fr}
+.app-layout{grid-template-columns:1fr}.sidebar{display:none}
+.review-layout{grid-template-columns:1fr}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
 <!-- AUTH -->
-<div id="auth-view">
+<div id="auth-view" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">Scholar<span>Mind</span></div>
-    <div class="auth-sub">Academic Intelligence Platform · Powered by Claude AI</div>
+    <div class="auth-sub">AI Agent for Academic Excellence · Powered by Claude</div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
       <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
     </div>
-    <!-- LOGIN -->
     <div id="login-form">
-      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="you@university.ca" value="demo@mcgill.ca"></div>
-      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" value="demo1234"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="you@university.ca"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" onkeydown="if(event.key==='Enter')login()"></div>
       <div id="login-error" class="error-msg"></div>
-      <button class="btn btn-primary" style="margin-top:0.5rem" onclick="login()">Sign In →</button>
-      <p style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:0.75rem">Demo: demo@mcgill.ca / demo1234</p>
+      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;justify-content:center" onclick="login()">Sign In →</button>
     </div>
-    <!-- REGISTER -->
     <div id="register-form" style="display:none">
       <div class="form-row">
         <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="reg-name" placeholder="Dr. Jane Smith"></div>
-        <div class="form-group"><label class="form-label">Role</label><select class="form-input" id="reg-role"><option value="researcher">Research Associate</option><option value="professor">Professor</option></select></div>
+        <div class="form-group"><label class="form-label">Role</label><select class="form-input" id="reg-role"><option value="researcher">Research Associate</option><option value="professor">Professor / PI</option></select></div>
       </div>
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email" placeholder="you@university.ca"></div>
       <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="reg-password" type="password" placeholder="min 8 characters"></div>
@@ -218,21 +394,278 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
         <div class="form-group"><label class="form-label">Department</label><input class="form-input" id="reg-dept" placeholder="Epidemiology"></div>
       </div>
       <div id="reg-error" class="error-msg"></div>
-      <button class="btn btn-primary" style="margin-top:0.5rem" onclick="register()">Create Account →</button>
+      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;justify-content:center" onclick="register()">Create Account →</button>
     </div>
   </div>
 </div>
 
+<!-- LANDING -->
+<div id="landing">
+<nav class="nav">
+  <div class="nav-logo">Scholar<span>Mind</span><small>AI AGENT</small></div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#workflow">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#testimonials">Stories</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn btn-outline btn-sm" onclick="showAuth('login')">Sign In</button>
+    <button class="btn btn-primary btn-sm" onclick="showAuth('register')">Start Free Trial →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">The first AI Agent built for academic life</div>
+    <h1>Your AI agent that <em>runs</em> your <span class="highlight">academic workflow</span></h1>
+    <p class="hero-sub">ScholarMind autonomously monitors your reviews, finds relevant grants, tracks your students, and drafts documents — so you can focus on research, not administration.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="showAuth('register')">Start Free Trial →</button>
+      <button class="btn btn-outline" onclick="showAuth('login')">Sign In</button>
+    </div>
+    <div class="hero-social-proof">
+      <div class="hero-avatars">
+        <div class="hero-avatar">JD</div>
+        <div class="hero-avatar">MG</div>
+        <div class="hero-avatar">AK</div>
+        <div class="hero-avatar">+</div>
+      </div>
+      <span>Trusted by 50+ researchers at McGill, UofT & UdeM</span>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="mockup-card">
+      <div class="mockup-bar">
+        <div class="mockup-dots"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div class="mockup-label">ScholarMind Agent · Active</div>
+      </div>
+      <div class="mockup-body">
+        <div style="font-size:0.68rem;font-weight:600;color:var(--teal);margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:0.06em">🤖 Agent Activity Today</div>
+        <div class="mockup-task"><span class="mockup-task-icon">📧</span><span class="mockup-task-text">2 new review requests detected from inbox</span><span class="mockup-task-badge badge-red">New</span></div>
+        <div class="mockup-task"><span class="mockup-task-icon">💰</span><span class="mockup-task-text">CIHR Project Grant deadline in 12 days</span><span class="mockup-task-badge badge-orange">Urgent</span></div>
+        <div class="mockup-task"><span class="mockup-task-icon">🎓</span><span class="mockup-task-text">No check-in with Nino K. for 23 days</span><span class="mockup-task-badge badge-orange">Follow up</span></div>
+        <div class="mockup-task"><span class="mockup-task-icon">📚</span><span class="mockup-task-text">8 new MR papers found on PubMed this week</span><span class="mockup-task-badge badge-green">Scout</span></div>
+        <div class="mockup-ai">
+          <strong>✦ ScholarMind · Claude AI</strong>
+          I've analyzed the Nature Genetics manuscript you received. Major concern: no multiple testing correction in Table 3. I've drafted your review — ready to export as Word or PDF.
+        </div>
+      </div>
+    </div>
+    <div class="float-tag" style="position:absolute;right:-20px;top:20px">⚡ Saves 8hrs/week</div>
+    <div class="float-tag" style="position:absolute;left:-30px;bottom:60px">🏆 Claude-powered</div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num">10×</span><div class="stat-label">faster peer review</div></div>
+  <div class="stat-item"><span class="stat-num">8hrs</span><div class="stat-label">saved per week</div></div>
+  <div class="stat-item"><span class="stat-num">1M+</span><div class="stat-label">token context window</div></div>
+  <div class="stat-item"><span class="stat-num">$0.05</span><div class="stat-label">per paper analysis</div></div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-center">
+    <span class="section-badge">What ScholarMind Does</span>
+    <h2 class="section-title">Not just a tool — an AI agent that works for you</h2>
+    <p class="section-sub">While you focus on research, ScholarMind handles the rest. Automatically.</p>
+  </div>
+  <div class="agent-grid">
+    <div class="agent-card">
+      <span class="agent-icon">✍️</span>
+      <h3>AI-Powered Peer Review</h3>
+      <p>Upload any manuscript or thesis. Claude reads the entire document, generates a structured review with scores, flags statistical issues, and exports a professional Word or PDF report.</p>
+      <span class="agent-tag">Auto-analyzes</span>
+    </div>
+    <div class="agent-card">
+      <span class="agent-icon">💰</span>
+      <h3>Monthly Grant Scout</h3>
+      <p>Based on your research profile, ScholarMind automatically finds relevant open grants from CIHR, NSERC, NIH, FRQS and more — every month, without you searching.</p>
+      <span class="agent-tag">Auto-discovers</span>
+    </div>
+    <div class="agent-card">
+      <span class="agent-icon">📝</span>
+      <h3>Grant Writing Studio</h3>
+      <p>Select a grant, paste the URL. Claude reads the requirements, then writes a complete first draft with proper citations — in the exact format the agency requires.</p>
+      <span class="agent-tag">Auto-drafts</span>
+    </div>
+    <div class="agent-card">
+      <span class="agent-icon">🎓</span>
+      <h3>Student Progress Tracker</h3>
+      <p>See all your students in one dashboard. Track thesis progress, log meetings, set milestones. Get alerts when a student hasn't checked in for too long. Generate follow-up emails in one click.</p>
+      <span class="agent-tag">Auto-monitors</span>
+    </div>
+    <div class="agent-card">
+      <span class="agent-icon">📚</span>
+      <h3>PubMed Paper Scout</h3>
+      <p>ScholarMind searches PubMed weekly based on your research keywords and surfaces new papers in your field automatically — so you never miss important literature.</p>
+      <span class="agent-tag">Auto-scans</span>
+    </div>
+    <div class="agent-card">
+      <span class="agent-icon">📊</span>
+      <h3>Unified Dashboard</h3>
+      <p>Every pending review, upcoming deadline, student check-in, and grant opportunity in one place. Know exactly what needs your attention today, ranked by urgency.</p>
+      <span class="agent-tag">Always current</span>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="workflow-section" id="workflow">
+  <div class="section-center">
+    <span class="section-badge" style="color:var(--gold-light)">How It Works</span>
+    <h2 class="section-title">Set up once. Works automatically.</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.65)">ScholarMind learns your research profile and works in the background — surfacing what matters when it matters.</p>
+  </div>
+  <div class="workflow-steps">
+    <div class="workflow-step"><div class="workflow-num">1</div><h4>Create your profile</h4><p>Enter your research keywords, institution, and connect your preferences. Takes 2 minutes.</p></div>
+    <div class="workflow-step"><div class="workflow-num">2</div><h4>Upload or receive documents</h4><p>Upload manuscripts, theses, grant proposals. Claude reads and analyzes everything automatically.</p></div>
+    <div class="workflow-step"><div class="workflow-num">3</div><h4>Agent works for you</h4><p>ScholarMind finds grants, monitors deadlines, tracks students, and scouts new papers — every day.</p></div>
+    <div class="workflow-step"><div class="workflow-num">4</div><h4>Review, edit & export</h4><p>Everything is draft-ready. Edit, refine with Claude's help, then download as Word or PDF.</p></div>
+  </div>
+</section>
+
+<!-- VS TABLE -->
+<section class="vs-section">
+  <div class="section-center">
+    <span class="section-badge">How We Compare</span>
+    <h2 class="section-title">Built for professors, not students</h2>
+    <p class="section-sub">Other tools help students write. ScholarMind helps professors manage their entire academic workflow.</p>
+  </div>
+  <table class="vs-table">
+    <thead>
+      <tr><th>Feature</th><th>Jenni.ai</th><th>ScholarMind</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>AI writing assistant</td><td class="vs-check">✓</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>Peer review with export</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>Thesis evaluation</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>Monthly grant discovery</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>Grant writing with citations</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>Student progress tracking</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr class="vs-highlight"><td>AI agent automation</td><td class="vs-cross">✗</td><td class="vs-check">✓</td></tr>
+      <tr><td>Target user</td><td>Students</td><td class="vs-highlight">Professors & Researchers</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-center">
+    <span class="section-badge">Pricing</span>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-sub">No usage caps. No per-analysis fees. One flat monthly price — less than one hour of your time.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-price">$29</div>
+      <div class="pricing-period">/month · billed monthly</div>
+      <ul class="pricing-features">
+        <li>20 AI paper analyses/month</li>
+        <li>Peer review with Word export</li>
+        <li>Up to 5 students</li>
+        <li>Grant finder (monthly)</li>
+        <li>Basic grant writing</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-outline" onclick="showAuth('register')">Start free trial</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-tier">Pro</div>
+      <div class="pricing-price">$49</div>
+      <div class="pricing-period">/month · billed monthly</div>
+      <ul class="pricing-features">
+        <li>Unlimited AI analyses</li>
+        <li>Word + PDF export</li>
+        <li>Unlimited students</li>
+        <li>Advanced grant writer</li>
+        <li>PubMed paper scout</li>
+        <li>Weekly digest email</li>
+        <li>Priority Claude Opus access</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-gold" onclick="showAuth('register')">Start free trial</button>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-tier">Lab / Team</div>
+      <div class="pricing-price">$99</div>
+      <div class="pricing-period">/month · up to 5 members</div>
+      <ul class="pricing-features">
+        <li>Everything in Pro</li>
+        <li>Shared lab workspace</li>
+        <li>Team paper assignments</li>
+        <li>Shared annotations</li>
+        <li>Lab knowledge base</li>
+        <li>Admin dashboard</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-outline" onclick="showAuth('register')">Contact us</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="testimonials">
+  <div class="section-center">
+    <span class="section-badge">Early Users</span>
+    <h2 class="section-title">What researchers are saying</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">I completed my last three journal reviews in half the time. The auto-generated scaffold catches statistical issues I might miss after reading for 3 hours straight.</p>
+      <div class="testimonial-author"><div class="t-avatar">JP</div><div><div class="t-name">Dr. Jean-Pierre M.</div><div class="t-role">Associate Professor · Epidemiology, McGill</div></div></div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">The grant finder surfaced a CIHR opportunity I had completely missed. ScholarMind wrote the first draft in 20 minutes. I spent 2 hours editing instead of 2 weeks writing.</p>
+      <div class="testimonial-author"><div class="t-avatar">CG</div><div><div class="t-name">Prof. C. Greenwood</div><div class="t-role">Canada Research Chair · Lady Davis Institute</div></div></div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">I supervise 6 PhD students. Keeping track of everyone's progress was chaos. ScholarMind made it manageable — I can see who needs attention at a glance.</p>
+      <div class="testimonial-author"><div class="t-avatar">AK</div><div><div class="t-name">Dr. A. Kristjansson</div><div class="t-role">Research Associate · UdeM</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <span class="section-badge" style="color:var(--gold-light)">Get Started Today</span>
+  <h2 class="section-title">Your AI agent is ready to work</h2>
+  <p class="section-sub">Join researchers at McGill, UofT, and UdeM who are saving 8+ hours per week with ScholarMind.</p>
+  <div class="cta-actions">
+    <button class="btn btn-gold" onclick="showAuth('register')">Start Free Trial →</button>
+    <button class="btn" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2)" onclick="showAuth('login')">Sign In</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Scholar<span>Mind</span></div>
+    <div class="footer-tagline">The AI agent for academic excellence. Powered by Claude AI. Built for the world's researchers.</div>
+  </div>
+  <div class="footer-col"><h5>Product</h5><ul><li><a href="#">Peer Review</a></li><li><a href="#">Grant Finder</a></li><li><a href="#">Grant Writer</a></li><li><a href="#">Student Tracker</a></li></ul></div>
+  <div class="footer-col"><h5>Company</h5><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Pricing</a></li><li><a href="#">Contact</a></li></ul></div>
+  <div class="footer-col"><h5>Legal</h5><ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Security</a></li></ul></div>
+</footer>
+<div class="footer-bottom"><span>© 2026 ScholarMind Technologies Inc.</span><span>Powered by Claude AI · Anthropic</span></div>
+</div><!-- end landing -->
+
 <!-- APP -->
-<div id="app-view">
-<div class="layout">
-  <!-- SIDEBAR -->
+<div id="app">
+<div id="auth-screen" style="display:none"><!-- handled above --></div>
+<div class="app-layout" id="app-layout">
   <aside class="sidebar">
-    <div class="sidebar-logo">Scholar<span>Mind</span></div>
+    <div class="sidebar-logo">Scholar<span>Mind</span><small>AI</small></div>
     <div class="nav-section">
-      <div class="nav-label">Main</div>
+      <div class="nav-label">Workspace</div>
       <button class="nav-item active" onclick="showPanel('dashboard')">📊 Dashboard</button>
-      <button class="nav-item" onclick="showPanel('papers')">📄 My Papers <span class="nav-badge" id="badge-papers">0</span></button>
+      <button class="nav-item" onclick="showPanel('papers')">📄 Papers <span class="nav-badge" id="badge-papers">0</span></button>
       <button class="nav-item" onclick="showPanel('reviews')">✍️ Reviews <span class="nav-badge" id="badge-reviews">0</span></button>
     </div>
     <div class="nav-section">
@@ -243,16 +676,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     <div class="sidebar-bottom">
       <div class="user-chip">
         <div class="avatar" id="user-avatar">?</div>
-        <div class="user-info">
-          <div class="name" id="user-name">Loading...</div>
-          <div class="role" id="user-role"></div>
-        </div>
+        <div><div class="user-name" id="user-name">Loading...</div><div class="user-role" id="user-role"></div></div>
       </div>
+      <button class="logout-btn" onclick="goToLanding()">🏠 Home</button>
       <button class="logout-btn" onclick="logout()">⎋ Sign out</button>
     </div>
   </aside>
-
-  <!-- MAIN -->
   <main class="main">
 
     <!-- DASHBOARD -->
@@ -278,7 +707,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="topbar">
         <span class="topbar-title">📄 Papers for Review</span>
         <div class="topbar-actions">
-          <select class="form-input btn-sm" id="paper-filter" onchange="filterPapers()" style="width:140px">
+          <select class="form-select" id="paper-filter" onchange="filterPapers()" style="width:150px;padding:0.4rem 0.6rem;font-size:0.82rem">
             <option value="">All Types</option>
             <option value="journal_review">Journal Review</option>
             <option value="thesis_phd">PhD Thesis</option>
@@ -288,9 +717,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
           <button class="btn btn-primary btn-sm" onclick="openUploadModal()">+ Upload Paper</button>
         </div>
       </div>
-      <div class="content">
-        <div id="papers-list"></div>
-      </div>
+      <div class="content"><div id="papers-list"></div></div>
     </div>
 
     <!-- REVIEW EDITOR -->
@@ -298,28 +725,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="topbar">
         <span class="topbar-title" id="review-editor-title">✍️ Review Editor</span>
         <div class="topbar-actions">
-          <button class="btn btn-secondary btn-sm" onclick="showPanel('papers')">← Back</button>
-          <button class="btn btn-secondary btn-sm" onclick="saveReview()">💾 Save</button>
-          <button class="btn btn-gold btn-sm" onclick="exportReview()">📥 Export Word</button>
+          <button class="btn btn-outline btn-sm" onclick="showPanel('papers')">← Back</button>
+          <button class="btn btn-outline btn-sm" onclick="saveReview()">💾 Save</button>
+          <button class="btn btn-gold btn-sm" onclick="exportReview('docx')">📥 Word</button>
+          <button class="btn btn-gold btn-sm" onclick="exportReview('pdf')">📄 PDF</button>
           <button class="btn btn-primary btn-sm" onclick="completeReview()">✓ Complete</button>
         </div>
       </div>
       <div class="content">
         <div class="review-layout">
-          <div class="review-form card" id="review-form-content"></div>
+          <div class="card review-form" id="review-form-content"></div>
           <div id="review-sidebar"></div>
         </div>
-        <div class="chat-layout" style="height:420px;margin-top:1rem">
+        <div style="margin-top:1rem">
           <div class="chat-panel">
-            <div class="chat-header"><h4>💬 Ask Claude about this paper</h4><span class="claude-badge">Claude Sonnet 4.6</span></div>
+            <div class="chat-header"><h4>💬 Ask Claude about this paper</h4><span class="claude-badge-sm">Claude AI</span></div>
             <div class="messages" id="review-chat-messages"></div>
             <div class="chat-input-area">
-              <textarea class="chat-input" id="review-chat-input" placeholder="Ask about methods, statistics, concerns..." onkeydown="chatKeydown(event,'review')"></textarea>
-              <button class="chat-send" onclick="sendChat('review')">Send</button>
+              <textarea class="chat-input" id="review-chat-input" placeholder="Ask about methods, statistics, concerns..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+              <button class="chat-send" onclick="sendChat()">Send</button>
             </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.75rem">
-            <div class="card" id="review-checklist-panel"><div class="card-title">✅ Auto Checklist</div><div id="checklist-content">Run analysis to see checklist</div></div>
           </div>
         </div>
       </div>
@@ -343,9 +768,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     <!-- GRANTS -->
     <div class="panel" id="panel-grants">
       <div class="topbar">
-        <span class="topbar-title">💰 Grants</span>
+        <span class="topbar-title">💰 Grants & Funding</span>
         <div class="topbar-actions">
-          <button class="btn btn-secondary btn-sm" onclick="findOpportunities()">🔍 Find Opportunities</button>
+          <button class="btn btn-outline btn-sm" onclick="openGrantScoutModal()">🔍 Find Grants for Me</button>
           <button class="btn btn-primary btn-sm" onclick="openAddGrantModal()">+ Add Grant</button>
         </div>
       </div>
@@ -357,6 +782,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
 </div>
 
 <!-- MODALS -->
+
+<!-- UPLOAD -->
 <div class="modal-overlay" id="upload-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('upload-modal')">✕</button>
@@ -364,11 +791,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
     <div class="form-group"><label class="form-label">Paper Title *</label><input class="form-input" id="up-title" placeholder="Full title of the manuscript"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Type *</label>
-        <select class="form-input" id="up-type">
+        <select class="form-select" id="up-type">
           <option value="journal_review">Journal Article Review</option>
           <option value="thesis_phd">PhD Thesis</option>
           <option value="thesis_msc">MSc Thesis</option>
-          <option value="grant">Grant Proposal</option>
+          <option value="grant">Grant Proposal Review</option>
         </select>
       </div>
       <div class="form-group"><label class="form-label">Journal / Institution</label><input class="form-input" id="up-journal" placeholder="e.g. Nature Genetics"></div>
@@ -378,26 +805,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" id="up-due" type="date"></div>
     </div>
     <div class="form-group">
-      <label class="form-label">Main File (PDF) *</label>
-      <div class="upload-zone" id="main-upload-zone" onclick="document.getElementById('up-file').click()">
+      <label class="form-label">Main File * (PDF, Word, or any format)</label>
+      <div class="upload-zone" onclick="document.getElementById('up-file').click()">
         <span class="upload-icon">📄</span>
-        <div id="main-file-name" style="font-size:0.85rem;font-weight:500">Click to upload PDF</div>
-        <div style="font-size:0.75rem;color:var(--muted)">Main manuscript</div>
+        <div id="main-file-name" style="font-size:0.85rem;font-weight:500;color:var(--ink)">Click to upload main manuscript</div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem">PDF, DOCX, TXT, R, Python — any format</div>
       </div>
-      <input type="file" id="up-file" accept=".pdf,.doc,.docx,.txt,.r,.R,.py,.csv,.md,.rmd,.Rmd,.tex,.html" style="display:none" onchange="updateFileName('up-file','main-file-name')">
+      <input type="file" id="up-file" style="display:none" onchange="updateFileName('up-file','main-file-name')">
     </div>
     <div class="form-group">
-      <label class="form-label">Supplementary Files (optional)</label>
+      <label class="form-label">Supplementary Files (unlimited — add as many as needed)</label>
       <div class="upload-zone" onclick="document.getElementById('up-supp').click()" style="padding:1rem">
-        <div id="supp-file-name" style="font-size:0.82rem;color:var(--muted)">📎 Click to add supplementary materials</div>
+        <div id="supp-file-name" style="font-size:0.82rem;color:var(--muted)">📎 Click to add supplementary materials, code, data files...</div>
       </div>
-      <input type="file" id="up-supp" accept=".pdf,.doc,.docx,.txt,.r,.R,.py,.csv,.md,.tex" multiple style="display:none" onchange="updateFileName('up-supp','supp-file-name',true)">
+      <input type="file" id="up-supp" multiple style="display:none" onchange="updateFileName('up-supp','supp-file-name',true)">
+      <div id="supp-file-list" style="margin-top:0.4rem;font-size:0.75rem;color:var(--muted)"></div>
     </div>
     <div id="upload-error" class="error-msg"></div>
-    <button class="btn btn-primary" onclick="uploadPaper()" id="upload-btn">Upload & Analyze with Claude →</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="uploadPaper()" id="upload-btn">Upload & Analyze with Claude →</button>
   </div>
 </div>
 
+<!-- STUDENT -->
 <div class="modal-overlay" id="student-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('student-modal')">✕</button>
@@ -408,116 +837,200 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="st-email" placeholder="student@mail.mcgill.ca"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Program</label><select class="form-input" id="st-program"><option>PhD</option><option>MSc</option><option>PostDoc</option></select></div>
+      <div class="form-group"><label class="form-label">Program</label><select class="form-select" id="st-program"><option>PhD</option><option>MSc</option><option>PostDoc</option><option>Undergraduate</option></select></div>
       <div class="form-group"><label class="form-label">Year</label><input class="form-input" id="st-year" type="number" min="1" max="8" value="1"></div>
     </div>
     <div class="form-group"><label class="form-label">Thesis Title</label><input class="form-input" id="st-thesis" placeholder="Working title"></div>
     <div class="form-group"><label class="form-label">Progress (%)</label><input class="form-input" id="st-progress" type="number" min="0" max="100" value="0"></div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="review-textarea" id="st-notes" rows="2" placeholder="Any notes about this student's situation..."></textarea></div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="review-textarea" id="st-notes" rows="2" placeholder="Notes about this student..."></textarea></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Last Meeting</label><input class="form-input" id="st-last-meeting" type="date"></div>
       <div class="form-group"><label class="form-label">Next Meeting</label><input class="form-input" id="st-next-meeting" type="date"></div>
     </div>
-    <button class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveStudent()">Save Student</button>
   </div>
 </div>
 
+<!-- ADD GRANT -->
 <div class="modal-overlay" id="grant-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('grant-modal')">✕</button>
     <div class="modal-title">Add Grant</div>
-    <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="gr-title" placeholder="Grant title"></div>
+    <div class="form-group"><label class="form-label">Grant Title *</label><input class="form-input" id="gr-title" placeholder="Grant title"></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Agency *</label><input class="form-input" id="gr-agency" placeholder="CIHR, NSERC, NIH..."></div>
-      <div class="form-group"><label class="form-label">Program</label><input class="form-input" id="gr-program" placeholder="Project Grant, R01..."></div>
+      <div class="form-group"><label class="form-label">Agency *</label>
+        <select class="form-select" id="gr-agency">
+          <option value="">Select agency...</option>
+          <option>CIHR</option><option>NSERC</option><option>SSHRC</option><option>FRQS</option><option>FQRNT</option><option>FQRSC</option>
+          <option>NIH</option><option>NSF</option><option>Wellcome Trust</option><option>ERC</option><option>Horizon Europe</option>
+          <option>Canadian Cancer Society</option><option>Heart & Stroke Foundation</option><option>Arthritis Society</option>
+          <option>Bill & Melinda Gates Foundation</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Program</label><input class="form-input" id="gr-program" placeholder="e.g. Project Grant, R01..."></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Deadline</label><input class="form-input" id="gr-deadline" type="date"></div>
-      <div class="form-group"><label class="form-label">Amount</label><input class="form-input" id="gr-amount" placeholder="$250,000/year"></div>
+      <div class="form-group"><label class="form-label">Amount</label><input class="form-input" id="gr-amount" placeholder="e.g. $250,000/year"></div>
     </div>
-    <div class="form-group"><label class="form-label">URL</label><input class="form-input" id="gr-url" placeholder="https://..."></div>
+    <div class="form-group"><label class="form-label">Grant URL (for writing assistance)</label><input class="form-input" id="gr-url" placeholder="https://..."></div>
     <div class="form-group"><label class="form-label">Description / Notes</label><textarea class="review-textarea" id="gr-desc" rows="2"></textarea></div>
-    <button class="btn btn-primary" onclick="saveGrant()">Add Grant</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveGrant()">Add Grant</button>
   </div>
 </div>
 
+<!-- GRANT SCOUT -->
+<div class="modal-overlay" id="grant-scout-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('grant-scout-modal')">✕</button>
+    <div class="modal-title">🔍 Find Relevant Grants For Me</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1.2rem">Select your research keywords and ScholarMind will find relevant open grants from CIHR, NSERC, NIH, and more.</p>
+    <div class="form-group">
+      <label class="form-label">Your Research Keywords (select all that apply)</label>
+      <div class="keyword-grid" id="keyword-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your Name & Institution (for personalized results)</label>
+      <input class="form-input" id="scout-profile" placeholder="e.g. Afshin Jamshidi, Research Associate, McGill University, Epidemiology">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Additional context (optional)</label>
+      <textarea class="review-textarea" id="scout-context" rows="2" placeholder="Any specific grant types or research goals..."></textarea>
+    </div>
+    <div id="scout-error" class="error-msg"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="runGrantScout()" id="scout-btn">🤖 Find Grants with Claude →</button>
+  </div>
+</div>
+
+<!-- GRANT WRITER -->
 <div class="modal-overlay" id="grant-writer-modal">
-  <div class="modal" style="width:700px;max-width:95vw">
+  <div class="modal" style="width:650px;max-width:95vw">
     <button class="modal-close" onclick="closeModal('grant-writer-modal')">✕</button>
-    <div class="modal-title" id="grant-writer-title">Grant Writing Studio</div>
-    <div class="form-group"><label class="form-label">Your Research Profile (helps Claude write better)</label><textarea class="review-textarea" id="grant-profile" rows="2" placeholder="e.g. Research Associate in statistical genetics at McGill, working on Mendelian randomization, multi-omics, and epidemiology of cardiometabolic diseases..."></textarea></div>
-    <div class="grant-sections">
-      <button class="section-tab active" onclick="selectGrantSection('specific_aims',this)">Specific Aims</button>
-      <button class="section-tab" onclick="selectGrantSection('significance',this)">Significance</button>
-      <button class="section-tab" onclick="selectGrantSection('innovation',this)">Innovation</button>
-      <button class="section-tab" onclick="selectGrantSection('approach',this)">Approach</button>
-      <button class="section-tab" onclick="selectGrantSection('team',this)">Team</button>
-      <button class="section-tab" onclick="selectGrantSection('budget_justification',this)">Budget</button>
+    <div class="modal-title" id="grant-writer-title">✨ Grant Writing Studio</div>
+    <div class="form-group">
+      <label class="form-label">Your Research Profile</label>
+      <textarea class="review-textarea" id="grant-profile" rows="2" placeholder="e.g. Research Associate in statistical genetics at McGill, working on Mendelian randomization, multi-omics, and cardiometabolic disease epidemiology..."></textarea>
     </div>
-    <div class="form-group"><label class="form-label">Current Draft (optional — Claude will improve it)</label><textarea class="review-textarea" id="grant-existing" rows="3" placeholder="Paste existing text or leave empty for Claude to write from scratch..."></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Select Section to Write</label>
+      <div class="grant-sections">
+        <button class="section-tab active" onclick="selectGrantSection('specific_aims',this)">Specific Aims</button>
+        <button class="section-tab" onclick="selectGrantSection('significance',this)">Significance</button>
+        <button class="section-tab" onclick="selectGrantSection('innovation',this)">Innovation</button>
+        <button class="section-tab" onclick="selectGrantSection('approach',this)">Approach</button>
+        <button class="section-tab" onclick="selectGrantSection('team',this)">Team & Expertise</button>
+        <button class="section-tab" onclick="selectGrantSection('budget_justification',this)">Budget</button>
+        <button class="section-tab" onclick="selectGrantSection('lay_summary',this)">Lay Summary</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Existing Draft (optional — Claude will improve it)</label>
+      <textarea class="review-textarea" id="grant-existing" rows="3" placeholder="Paste existing text or leave empty for Claude to write from scratch..."></textarea>
+    </div>
     <div id="grant-writer-error" class="error-msg"></div>
-    <button class="btn btn-primary" onclick="writeGrantSection()" id="grant-write-btn">✨ Write with Claude →</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="writeGrantSection()" id="grant-write-btn">✨ Write with Claude →</button>
     <div id="grant-output" style="margin-top:1rem;display:none">
-      <label class="form-label">Claude's Draft</label>
-      <textarea class="review-textarea" id="grant-output-text" rows="10" style="min-height:200px"></textarea>
-      <button class="btn btn-secondary btn-sm" style="margin-top:0.5rem" onclick="copyGrantOutput()">📋 Copy</button>
+      <label class="form-label">Claude's Draft — Edit as needed</label>
+      <textarea class="review-textarea" id="grant-output-text" rows="12" style="min-height:220px"></textarea>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+        <button class="btn btn-gold btn-sm" onclick="downloadGrantSection('docx')">📥 Download Word</button>
+        <button class="btn btn-gold btn-sm" onclick="downloadGrantSection('pdf')">📄 Download PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="copyGrantOutput()">📋 Copy</button>
+        <button class="btn btn-outline btn-sm" onclick="improveGrant()">✨ Improve with Claude</button>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- FOLLOWUP -->
 <div class="modal-overlay" id="followup-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('followup-modal')">✕</button>
-    <div class="modal-title">AI Follow-up Email</div>
-    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Claude generated this follow-up email. Edit as needed then copy.</p>
+    <div class="modal-title">✉️ AI Follow-up Email</div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">Claude generated this follow-up. Edit as needed then copy.</p>
     <textarea class="review-textarea" id="followup-text" rows="8" style="min-height:160px"></textarea>
-    <button class="btn btn-primary btn-sm" style="margin-top:0.75rem" onclick="copyFollowup()">📋 Copy Email</button>
+    <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
+      <button class="btn btn-primary btn-sm" onclick="copyFollowup()">📋 Copy Email</button>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:8000/api';
+const API = window.location.origin + '/api';
 let token = localStorage.getItem('sm_token');
-let currentUser = JSON.parse(localStorage.getItem('sm_user') || 'null');
+let currentUser = JSON.parse(localStorage.getItem('sm_user')||'null');
 let currentPaperId = null;
 let currentReviewId = null;
 let currentGrantId = null;
 let selectedGrantSection = 'specific_aims';
 let allPapers = [];
+let selectedKeywords = [];
 
-// ── API helpers ──
-async function api(method, path, body=null, isForm=false) {
-  const opts = { method, headers: {} };
-  if (token) opts.headers['Authorization'] = `Bearer ${token}`;
-  if (body && !isForm) { opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
-  if (body && isForm) opts.body = body;
-  const r = await fetch(API+path, opts);
-  if (r.status === 401) { logout(); return null; }
-  if (!r.ok) { const e = await r.json().catch(()=>({detail:'Error'})); throw new Error(e.detail||'Error'); }
-  if (r.headers.get('content-type')?.includes('application/json')) return r.json();
-  return r;
+const RESEARCH_KEYWORDS = [
+  'Machine Learning','Deep Learning','Bioinformatics','Biostatistics',
+  'Epidemiology','Mendelian Randomization','Causal Inference','GWAS',
+  'Multi-omics','Genomics','Proteomics','Metabolomics','Transcriptomics',
+  'Statistical Genetics','eQTL Analysis','Colocalization','Federated Learning',
+  'Electronic Health Records','Clinical Decision Support','Healthcare Analytics',
+  'Osteoarthritis','Cardiovascular Disease','Type 2 Diabetes','Cancer',
+  'Immune Response','Population Health','Precision Medicine','Pharmacogenomics',
+  'Survival Analysis','Longitudinal Studies','Matched Case-Control','Meta-analysis',
+  'R Programming','Python','SQL','Power BI','Natural Language Processing'
+];
+
+// ── ROUTING ──
+function showApp() {
+  document.getElementById('landing').style.display='none';
+  document.getElementById('auth-view').style.display='none';
+  document.getElementById('app').style.display='block';
+}
+function showLanding() {
+  document.getElementById('landing').style.display='block';
+  document.getElementById('auth-view').style.display='none';
+  document.getElementById('app').style.display='none';
+}
+function showAuth(tab) {
+  document.getElementById('landing').style.display='none';
+  document.getElementById('auth-view').style.display='flex';
+  document.getElementById('app').style.display='none';
+  switchAuthTab(tab);
+}
+function goToLanding() { showLanding(); }
+
+// ── AUTH ──
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display=tab==='register'?'block':'none';
 }
 
-// ── Auth ──
-function switchAuthTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
-  document.getElementById('login-form').style.display = tab==='login'?'block':'none';
-  document.getElementById('register-form').style.display = tab==='register'?'block':'none';
+async function api(method, path, body=null, isForm=false) {
+  const opts={method,headers:{}};
+  if(token) opts.headers['Authorization']=`Bearer ${token}`;
+  if(body&&!isForm){opts.headers['Content-Type']='application/json';opts.body=JSON.stringify(body);}
+  if(body&&isForm) opts.body=body;
+  const r=await fetch(API+path,opts);
+  if(r.status===401){logout();return null;}
+  if(!r.ok){const e=await r.json().catch(()=>({detail:'Error'}));throw new Error(e.detail||'Error');}
+  if(r.headers.get('content-type')?.includes('application/json')) return r.json();
+  return r;
 }
 
 async function login() {
   const email=document.getElementById('login-email').value;
-  const password=document.getElementById('login-password').value;
+  const pass=document.getElementById('login-password').value;
   try {
-    const fd=new FormData(); fd.append('username',email); fd.append('password',password);
+    const fd=new FormData();fd.append('username',email);fd.append('password',pass);
     const r=await api('POST','/auth/login',fd,true);
-    if (!r) return;
-    token=r.access_token; currentUser=r.user;
-    localStorage.setItem('sm_token',token); localStorage.setItem('sm_user',JSON.stringify(currentUser));
+    if(!r) return;
+    token=r.access_token;currentUser=r.user;
+    localStorage.setItem('sm_token',token);localStorage.setItem('sm_user',JSON.stringify(currentUser));
     initApp();
-  } catch(e) { document.getElementById('login-error').textContent=e.message; }
+  } catch(e){document.getElementById('login-error').textContent=e.message;}
 }
 
 async function register() {
@@ -531,23 +1044,20 @@ async function register() {
       department:document.getElementById('reg-dept').value
     });
     if(!r) return;
-    token=r.access_token; currentUser=r.user;
-    localStorage.setItem('sm_token',token); localStorage.setItem('sm_user',JSON.stringify(currentUser));
+    token=r.access_token;currentUser=r.user;
+    localStorage.setItem('sm_token',token);localStorage.setItem('sm_user',JSON.stringify(currentUser));
     initApp();
-  } catch(e) { document.getElementById('reg-error').textContent=e.message; }
+  } catch(e){document.getElementById('reg-error').textContent=e.message;}
 }
 
 function logout() {
-  token=null; currentUser=null;
-  localStorage.removeItem('sm_token'); localStorage.removeItem('sm_user');
-  document.getElementById('app-view').style.display='none';
-  document.getElementById('auth-view').style.display='flex';
+  token=null;currentUser=null;
+  localStorage.removeItem('sm_token');localStorage.removeItem('sm_user');
+  showLanding();
 }
 
-// ── App init ──
 function initApp() {
-  document.getElementById('auth-view').style.display='none';
-  document.getElementById('app-view').style.display='block';
+  showApp();
   if(currentUser){
     document.getElementById('user-name').textContent=currentUser.name||'User';
     document.getElementById('user-role').textContent=`${currentUser.role||''} · ${currentUser.institution||''}`;
@@ -555,17 +1065,15 @@ function initApp() {
     const h=new Date().getHours();
     document.getElementById('dash-greeting').textContent=`Good ${h<12?'morning':h<17?'afternoon':'evening'}, ${currentUser.name?.split(' ')[0]||''}`;
   }
-  loadDashboard();
-  loadPapers();
-  loadReviews();
+  loadDashboard();loadPapers();loadReviews();
 }
 
-// ── Panels ──
+// ── PANELS ──
 function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+name)?.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.toLowerCase().includes(name.split('-')[0])) n.classList.add('active'); });
+  event?.currentTarget?.classList.add('active');
   if(name==='papers') loadPapers();
   if(name==='reviews') loadReviews();
   if(name==='students') loadStudents();
@@ -573,60 +1081,58 @@ function showPanel(name) {
   if(name==='dashboard') loadDashboard();
 }
 
-// ── Dashboard ──
+// ── DASHBOARD ──
 async function loadDashboard() {
   try {
     const d=await api('GET','/dashboard/');
     if(!d) return;
     const s=d.stats;
     document.getElementById('dash-stats').innerHTML=`
-      <div class="stat-card"><span class="stat-num">${s.total_papers}</span><div class="stat-label">Total Papers</div></div>
-      <div class="stat-card"><span class="stat-num" style="color:var(--warning)">${s.pending_reviews}</span><div class="stat-label">Pending Reviews</div></div>
-      <div class="stat-card"><span class="stat-num" style="color:var(--success)">${s.completed_reviews}</span><div class="stat-label">Completed</div></div>
-      <div class="stat-card"><span class="stat-num">${s.total_students}</span><div class="stat-label">Students</div></div>`;
+      <div class="stat-card"><span class="stat-num-lg">${s.total_papers}</span><div class="stat-label-sm">Total Papers</div></div>
+      <div class="stat-card"><span class="stat-num-lg" style="color:var(--warning)">${s.pending_reviews}</span><div class="stat-label-sm">Pending Reviews</div></div>
+      <div class="stat-card"><span class="stat-num-lg" style="color:var(--success)">${s.completed_reviews}</span><div class="stat-label-sm">Completed</div></div>
+      <div class="stat-card"><span class="stat-num-lg">${s.total_students}</span><div class="stat-label-sm">Students</div></div>`;
     document.getElementById('dash-tasks').innerHTML=d.urgent_tasks.length?d.urgent_tasks.map(t=>`
-      <div class="task-item priority-${t.priority}" onclick="handleTaskClick(${JSON.stringify(t).replace(/"/g,"'")})">
-        <span class="task-icon">${t.type==='overdue_review'?'🔴':t.type==='review_due'?'⏰':t.type==='grant_deadline'?'💰':'🎓'}</span>
-        <div class="task-text"><div class="task-title">${t.title}</div></div>
+      <div class="task-item priority-${t.priority}" onclick="handleTaskClick('${t.type}')">
+        <span style="font-size:1rem">${t.type==='overdue_review'?'🔴':t.type==='review_due'?'⏰':t.type==='grant_deadline'?'💰':'🎓'}</span>
+        <div><div class="task-title">${t.title}</div></div>
       </div>`).join(''):'<div class="empty-state" style="padding:1rem"><span class="empty-icon">✅</span><div class="empty-text">All caught up!</div></div>';
     document.getElementById('dash-papers').innerHTML=d.recent_papers.map(p=>`
       <div class="paper-item" onclick="openPaper(${p.id})">
-        <div class="paper-info">
-          <div class="paper-title-text">${p.title}</div>
-          <div class="paper-meta-row"><span class="tag tag-${p.paper_type}">${formatType(p.paper_type)}</span><span class="tag tag-${p.status}">${p.status}</span></div>
-        </div>
+        <div class="paper-info"><div class="paper-title-txt">${p.title}</div>
+        <div class="paper-meta-row"><span class="tag tag-${p.paper_type}">${fmtType(p.paper_type)}</span><span class="tag tag-${p.status}">${p.status}</span></div></div>
       </div>`).join('')||'<div style="color:var(--muted);font-size:0.82rem">No papers yet</div>';
     document.getElementById('dash-grants').innerHTML=d.upcoming_grants.map(g=>{
       const days=g.deadline?Math.ceil((new Date(g.deadline)-new Date())/86400000):null;
       return `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border)">
         <span class="agency-badge">${g.agency}</span>
         <div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.title}</div>
-        ${days!==null?`<div class="due-text ${days<=14?'due-overdue':''}">${days}d left</div>`:''}
-        </div></div>`;}).join('')||'<div style="color:var(--muted);font-size:0.82rem">No upcoming deadlines</div>';
+        ${days!==null?`<div class="${days<=14?'deadline-soon':'due-normal'}">${days<0?'Deadline passed':days+'d left'}</div>`:''}</div></div>`;
+    }).join('')||'<div style="color:var(--muted);font-size:0.82rem">No upcoming deadlines</div>';
     document.getElementById('dash-students').innerHTML=d.students_summary.map(s=>`
       <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid var(--border)">
         <div class="avatar" style="width:28px;height:28px;font-size:0.7rem">${s.name[0]}</div>
         <div style="flex:1"><div style="font-size:0.82rem;font-weight:500">${s.name}</div>
-          <div class="progress-bar" style="margin:2px 0 0"><div class="progress-fill" style="width:${s.progress_percent}%"></div></div>
-        </div><span style="font-size:0.72rem;color:var(--muted)">${s.progress_percent}%</span>
+        <div class="progress-bar" style="margin:2px 0 0"><div class="progress-fill" style="width:${s.progress_percent}%"></div></div></div>
+        <span style="font-size:0.72rem;color:var(--muted)">${s.progress_percent}%</span>
       </div>`).join('')||'<div style="color:var(--muted);font-size:0.82rem">No students added</div>';
-  } catch(e){ console.error(e); }
+  } catch(e){console.error(e);}
 }
 
-function handleTaskClick(t) {
-  if(t.type.includes('review')||t.type==='overdue_review') { showPanel('papers'); }
-  else if(t.type==='grant_deadline') { showPanel('grants'); }
-  else if(t.type==='student_checkin') { showPanel('students'); }
+function handleTaskClick(type) {
+  if(type.includes('review')||type==='overdue_review') showPanel('papers');
+  else if(type==='grant_deadline') showPanel('grants');
+  else if(type==='student_checkin') showPanel('students');
 }
 
-// ── Papers ──
+// ── PAPERS ──
 async function loadPapers() {
   try {
     allPapers=await api('GET','/papers/');
     if(!allPapers) return;
     document.getElementById('badge-papers').textContent=allPapers.filter(p=>p.status!=='completed').length;
     renderPapers(allPapers);
-  } catch(e){ console.error(e); }
+  } catch(e){console.error(e);}
 }
 
 function filterPapers(){
@@ -636,66 +1142,63 @@ function filterPapers(){
 
 function renderPapers(papers) {
   const el=document.getElementById('papers-list');
-  if(!papers.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">📄</span><div class="empty-text">No papers yet</div><div class="empty-sub">Upload your first paper to get started</div></div>`; return; }
+  if(!papers.length){el.innerHTML=`<div class="empty-state"><span class="empty-icon">📄</span><div class="empty-text">No papers yet</div><div>Upload your first paper to get started</div></div>`;return;}
   el.innerHTML=papers.map(p=>{
     const days=p.due_date?Math.ceil((new Date(p.due_date)-new Date())/86400000):null;
     const overdue=days!==null&&days<0;
     return `<div class="paper-item" onclick="openPaper(${p.id})">
       <div class="paper-info">
-        <div class="paper-title-text">${p.title}</div>
+        <div class="paper-title-txt">${p.title}</div>
         <div class="paper-meta-row">
-          <span class="tag tag-${p.paper_type}">${formatType(p.paper_type)}</span>
+          <span class="tag tag-${p.paper_type}">${fmtType(p.paper_type)}</span>
           <span class="tag tag-${p.status}">${p.status.replace('_',' ')}</span>
           ${p.journal?`<span style="font-size:0.72rem;color:var(--muted)">${p.journal}</span>`:''}
           ${p.supp_count?`<span style="font-size:0.68rem;color:var(--muted)">+${p.supp_count} supp</span>`:''}
         </div>
       </div>
-      ${days!==null?`<div class="due-text ${overdue?'due-overdue':''}">${overdue?'Overdue '+Math.abs(days)+'d':days+'d left'}</div>`:''}
-      <button class="btn btn-danger btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();deletePaper(${p.id})">🗑</button>
-    </div>`;}).join('');
+      ${days!==null?`<div class="${overdue?'due-overdue':'due-normal'}">${overdue?'Overdue '+Math.abs(days)+'d':days+'d left'}</div>`:''}
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deletePaper(${p.id})" title="Delete">🗑</button>
+    </div>`;
+  }).join('');
 }
 
 async function openPaper(id) {
   currentPaperId=id;
   showPanel('review-editor');
   document.getElementById('review-editor-title').textContent='⏳ Loading...';
-  document.getElementById('review-form-content').innerHTML='<div style="padding:2rem;text-align:center;color:var(--muted)">Loading paper data...</div>';
+  document.getElementById('review-form-content').innerHTML='<div style="padding:2rem;text-align:center;color:var(--muted)">Loading...</div>';
   try {
-    const [paper,review,history]=await Promise.all([
+    const [paper,reviews,history]=await Promise.all([
       api('GET',`/papers/${id}`),
-      api('GET','/reviews/').then(rs=>rs.find(r=>r.paper_id===id)),
+      api('GET','/reviews/'),
       api('GET',`/papers/${id}/chat/history`)
     ]);
+    const review=reviews?.find(r=>r.paper_id===id);
     currentReviewId=review?.id||null;
     renderReviewEditor(paper,review);
     renderChatHistory(history||[]);
-    if(!review||!review.claude_analysis){
-      showToast('Running Claude analysis...');
-      runAnalysis(id);
-    }
-  } catch(e){ showToast(e.message,'error'); }
+    if(!review?.claude_analysis){showToast('Running Claude analysis...');runAnalysis(id);}
+  } catch(e){showToast(e.message,'error');}
 }
 
 function renderReviewEditor(paper,review) {
-  document.getElementById('review-editor-title').textContent=`✍️ ${paper.title.substring(0,50)}...`;
+  document.getElementById('review-editor-title').textContent=`✍️ ${paper.title.substring(0,60)}...`;
   document.getElementById('review-form-content').innerHTML=`
     <div style="margin-bottom:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
-      <span class="tag tag-${paper.paper_type}">${formatType(paper.paper_type)}</span>
+      <span class="tag tag-${paper.paper_type}">${fmtType(paper.paper_type)}</span>
       ${paper.journal?`<span class="tag tag-journal">${paper.journal}</span>`:''}
       <span class="tag tag-${paper.status}">${paper.status}</span>
     </div>
-    <div class="form-group"><span class="section-label">Summary of the Work</span>
+    <div class="form-group"><label class="form-label">Summary of the Work</label>
       <textarea class="review-textarea" id="rv-summary" rows="4">${review?.summary||''}</textarea></div>
-    <div class="form-group"><span class="section-label">Major Concerns</span>
+    <div class="form-group"><label class="form-label">Major Concerns</label>
       <textarea class="review-textarea" id="rv-major" rows="5">${review?.major_concerns||''}</textarea></div>
-    <div class="form-group"><span class="section-label">Minor Concerns</span>
+    <div class="form-group"><label class="form-label">Minor Concerns</label>
       <textarea class="review-textarea" id="rv-minor" rows="3">${review?.minor_concerns||''}</textarea></div>
-    <div class="form-group"><span class="section-label">Scores</span>
+    <div class="form-group"><label class="form-label">Scores</label>
       <div class="score-grid">
         <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Recommendation</div>
-          <select class="score-select" id="rv-rec">
-            ${['Accept','Minor Revision','Major Revision','Reject'].map(o=>`<option ${review?.recommendation===o?'selected':''}>${o}</option>`).join('')}
-          </select></div>
+          <select class="score-select" id="rv-rec">${['Accept','Minor Revision','Major Revision','Reject'].map(o=>`<option ${review?.recommendation===o?'selected':''}>${o}</option>`).join('')}</select></div>
         <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Novelty (0-10)</div><input class="score-select" id="rv-novelty" type="number" min="0" max="10" step="0.5" value="${review?.score_novelty||''}"></div>
         <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Methodology (0-10)</div><input class="score-select" id="rv-method" type="number" min="0" max="10" step="0.5" value="${review?.score_methodology||''}"></div>
         <div><div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.2rem">Statistics (0-10)</div><input class="score-select" id="rv-stats" type="number" min="0" max="10" step="0.5" value="${review?.score_statistics||''}"></div>
@@ -708,7 +1211,7 @@ function renderReviewSidebar(review) {
   const scores=review?[
     {l:'Novelty',v:review.score_novelty},{l:'Methodology',v:review.score_methodology},
     {l:'Clarity',v:review.score_clarity},{l:'Statistics',v:review.score_statistics}
-  ].filter(s=>s.v):'';
+  ].filter(s=>s.v):[];
   document.getElementById('review-sidebar').innerHTML=`
     ${scores.length?`<div class="card"><div class="card-title">📊 Scores</div>
       ${scores.map(s=>`<div class="score-bar-row"><div class="score-bar-label">${s.l}</div>
@@ -717,15 +1220,14 @@ function renderReviewSidebar(review) {
       <div style="margin-top:0.75rem;font-size:0.82rem"><strong>Recommendation:</strong> ${review?.recommendation||'—'}</div>
     </div>`:''}
     <div class="card"><div class="card-title">🤖 Claude Analysis</div>
-      <div style="font-size:0.78rem;line-height:1.6;color:var(--ink)">${review?.claude_analysis||'<span style="color:var(--muted)">Analysis will appear here after running.</span>'}</div>
-      ${!review?.claude_analysis?`<button class="btn btn-secondary btn-sm" style="margin-top:0.75rem;width:100%" onclick="runAnalysis(${currentPaperId})">▶ Run Analysis</button>`:''}
-    </div>`;
+      <div style="font-size:0.78rem;line-height:1.6;color:var(--ink)">${review?.claude_analysis||'<span style="color:var(--muted)">Run analysis to see Claude\'s assessment.</span>'}</div>
+      ${!review?.claude_analysis?`<button class="btn btn-outline btn-sm" style="margin-top:0.75rem;width:100%" onclick="runAnalysis(${currentPaperId})">▶ Run Analysis</button>`:''}
+    </div>
+    <div class="card" id="review-checklist-panel"><div class="card-title">✅ Auto Checklist</div><div id="checklist-content" style="font-size:0.78rem;color:var(--muted)">Run analysis to see checklist</div></div>`;
   if(review?.claude_checklist?.length) {
     document.getElementById('checklist-content').innerHTML=review.claude_checklist.map(c=>`
       <div class="check-item">
-        <span class="check-${c.status}">
-          ${c.status==='pass'?'✓':c.status==='warn'?'⚠':'✗'}
-        </span>
+        <span class="check-${c.status}">${c.status==='pass'?'✓':c.status==='warn'?'⚠':'✗'}</span>
         <span style="flex:1">${c.item}</span>
         ${c.note?`<span style="color:var(--muted);font-size:0.68rem">${c.note}</span>`:''}
       </div>`).join('');
@@ -733,24 +1235,23 @@ function renderReviewSidebar(review) {
 }
 
 async function runAnalysis(paperId) {
-  showToast('Claude is analyzing the full paper... this may take 30-60 seconds');
+  showToast('Claude is analyzing the full paper... 30-60 seconds');
   try {
     const result=await api('POST',`/papers/${paperId}/analyze`);
-    currentReviewId=null;
     const reviews=await api('GET','/reviews/');
-    const r=reviews.find(rv=>rv.paper_id===paperId);
-    if(r){ currentReviewId=r.id; renderReviewSidebar(r); }
-    showToast('Analysis complete!');
-    if(document.getElementById('rv-summary')) {
+    const r=reviews?.find(rv=>rv.paper_id===paperId);
+    if(r){currentReviewId=r.id;renderReviewSidebar(r);}
+    if(document.getElementById('rv-summary')){
       document.getElementById('rv-summary').value=result.summary||'';
       document.getElementById('rv-major').value=result.major_concerns||'';
       document.getElementById('rv-minor').value=result.minor_concerns||'';
     }
-  } catch(e){ showToast('Analysis failed: '+e.message,'error'); }
+    showToast('Analysis complete!','success');
+  } catch(e){showToast('Analysis failed: '+e.message,'error');}
 }
 
 async function saveReview() {
-  if(!currentReviewId){ showToast('Run analysis first','error'); return; }
+  if(!currentReviewId){showToast('Run analysis first','error');return;}
   try {
     await api('PUT',`/reviews/${currentReviewId}`,{
       summary:document.getElementById('rv-summary').value,
@@ -761,37 +1262,41 @@ async function saveReview() {
       score_methodology:parseFloat(document.getElementById('rv-method').value)||null,
       score_statistics:parseFloat(document.getElementById('rv-stats').value)||null,
     });
-    showToast('Review saved!');
-  } catch(e){ showToast(e.message,'error'); }
+    showToast('Review saved!','success');
+  } catch(e){showToast(e.message,'error');}
 }
 
-async function exportReview() {
-  if(!currentReviewId){ showToast('Save review first','error'); return; }
+async function exportReview(format) {
+  if(!currentReviewId){showToast('Save review first','error');return;}
   await saveReview();
-  window.open(`${API}/reviews/${currentReviewId}/export?token=${token}`,'_blank');
-  // Actually trigger download
-  const r=await fetch(`${API}/reviews/${currentReviewId}/export`,{headers:{Authorization:`Bearer ${token}`}});
-  const blob=await r.blob();
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='review.docx'; a.click();
-  showToast('Review exported as Word document!');
+  try {
+    const r=await fetch(`${API}/reviews/${currentReviewId}/export?format=${format}`,{headers:{Authorization:`Bearer ${token}`}});
+    if(!r.ok) throw new Error('Export failed');
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`review_${currentReviewId}.${format==='pdf'?'pdf':'docx'}`;
+    a.click();
+    showToast(`Review exported as ${format.toUpperCase()}!`,'success');
+  } catch(e){showToast(e.message,'error');}
 }
 
 async function completeReview() {
   await saveReview();
   if(!currentReviewId) return;
   await api('POST',`/reviews/${currentReviewId}/complete`);
-  showToast('Review marked as complete!');
-  showPanel('papers'); loadPapers();
+  showToast('Review marked as complete!','success');
+  showPanel('papers');loadPapers();
 }
 
 async function deletePaper(id) {
-  if(!confirm('Delete this paper and its review?')) return;
+  if(!confirm('Delete this paper and its review? This cannot be undone.')) return;
   await api('DELETE',`/papers/${id}`);
-  loadPapers(); showToast('Paper deleted');
+  loadPapers();showToast('Paper deleted');
 }
 
-// ── Chat ──
+// ── CHAT ──
 function renderChatHistory(history) {
   const el=document.getElementById('review-chat-messages');
   el.innerHTML='';
@@ -799,10 +1304,10 @@ function renderChatHistory(history) {
     el.innerHTML=`<div class="msg msg-claude"><span class="msg-source">✦ ScholarMind · Claude</span>I've read your paper. Ask me anything about the methods, statistical approach, findings, limitations, or how it compares to other work in the field.</div>`;
     return;
   }
-  history.forEach(m=>appendMessage(m.role==='user'?'user':'claude',m.content));
+  history.forEach(m=>appendMsg(m.role==='user'?'user':'claude',m.content));
 }
 
-function appendMessage(role,content) {
+function appendMsg(role,content) {
   const el=document.getElementById('review-chat-messages');
   const div=document.createElement('div');
   div.className=`msg msg-${role}`;
@@ -812,64 +1317,64 @@ function appendMessage(role,content) {
   return div;
 }
 
-function chatKeydown(e,panel){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat(panel);}}
-
-async function sendChat(panel) {
+async function sendChat() {
   const input=document.getElementById('review-chat-input');
   const msg=input.value.trim();
   if(!msg||!currentPaperId) return;
   input.value='';
-  appendMessage('user',msg);
-  const thinking=appendMessage('claude','<span class="msg-thinking"><span class="loading"><span></span><span></span><span></span></span> Claude is reading...</span>');
+  appendMsg('user',msg);
+  const thinking=appendMsg('claude','<span class="msg-thinking">Claude is reading...</span>');
   try {
     const r=await api('POST',`/papers/${currentPaperId}/chat`,{message:msg});
     thinking.innerHTML=`<span class="msg-source">✦ ScholarMind · Claude</span>${r.response}`;
-  } catch(e){ thinking.innerHTML=`<span class="msg-source">✦ ScholarMind · Claude</span><span style="color:var(--danger)">${e.message}</span>`; }
+  } catch(e){thinking.innerHTML=`<span class="msg-source">✦ ScholarMind · Claude</span><span style="color:var(--danger)">${e.message}</span>`;}
   document.getElementById('review-chat-messages').scrollTop=99999;
 }
 
-// ── Reviews list ──
+// ── REVIEWS LIST ──
 async function loadReviews() {
   try {
     const reviews=await api('GET','/reviews/');
     if(!reviews) return;
     document.getElementById('badge-reviews').textContent=reviews.filter(r=>r.status!=='completed').length;
     const el=document.getElementById('reviews-list');
-    if(!reviews.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">✍️</span><div class="empty-text">No reviews yet</div><div class="empty-sub">Upload a paper to start reviewing</div></div>`; return; }
+    if(!reviews.length){el.innerHTML=`<div class="empty-state"><span class="empty-icon">✍️</span><div class="empty-text">No reviews yet</div><div>Upload a paper to start reviewing</div></div>`;return;}
     el.innerHTML=reviews.map(r=>{
       const days=r.due_date?Math.ceil((new Date(r.due_date)-new Date())/86400000):null;
       return `<div class="paper-item" onclick="openPaper(${r.paper_id})">
-        <div class="paper-info">
-          <div class="paper-title-text">${r.paper_title}</div>
-          <div class="paper-meta-row">
-            <span class="tag tag-${r.paper_type}">${formatType(r.paper_type)}</span>
-            <span class="tag tag-${r.status}">${r.status}</span>
-            ${r.recommendation?`<span style="font-size:0.72rem;font-weight:500">${r.recommendation}</span>`:''}
-          </div>
-        </div>
-        ${days!==null?`<div class="due-text ${days<0?'due-overdue':''}">${days<0?'Overdue':days+'d'}</div>`:''}
-      </div>`;}).join('');
-  } catch(e){ console.error(e); }
+        <div class="paper-info"><div class="paper-title-txt">${r.paper_title}</div>
+        <div class="paper-meta-row"><span class="tag tag-${r.paper_type}">${fmtType(r.paper_type)}</span><span class="tag tag-${r.status}">${r.status}</span>
+        ${r.recommendation?`<span style="font-size:0.72rem;font-weight:500">${r.recommendation}</span>`:''}</div></div>
+        ${days!==null?`<div class="${days<0?'due-overdue':'due-normal'}">${days<0?'Overdue':days+'d'}</div>`:''}
+      </div>`;
+    }).join('');
+  } catch(e){console.error(e);}
 }
 
-// ── Upload ──
-function openUploadModal(){ document.getElementById('upload-modal').classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+// ── UPLOAD ──
+function openUploadModal(){document.getElementById('upload-modal').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 function updateFileName(inputId,labelId,multi=false){
   const files=document.getElementById(inputId).files;
-  document.getElementById(labelId).textContent=multi?`${files.length} file(s) selected`:files[0]?.name||'No file selected';
+  if(multi){
+    document.getElementById(labelId).textContent=`${files.length} file(s) selected`;
+    const list=document.getElementById('supp-file-list');
+    if(list) list.innerHTML=Array.from(files).map(f=>`📎 ${f.name}`).join('<br>');
+  } else {
+    document.getElementById(labelId).textContent=files[0]?.name||'No file selected';
+  }
 }
 
 async function uploadPaper() {
   const title=document.getElementById('up-title').value.trim();
   const file=document.getElementById('up-file').files[0];
-  if(!title){ document.getElementById('upload-error').textContent='Title is required'; return; }
-  if(!file){ document.getElementById('upload-error').textContent='Please select a PDF file'; return; }
+  if(!title){document.getElementById('upload-error').textContent='Title is required';return;}
+  if(!file){document.getElementById('upload-error').textContent='Please select a file';return;}
   const btn=document.getElementById('upload-btn');
-  btn.textContent='Uploading & extracting text...'; btn.disabled=true;
+  btn.textContent='Uploading & extracting text...';btn.disabled=true;
   try {
     const fd=new FormData();
-    fd.append('title',title); fd.append('authors',document.getElementById('up-authors').value);
+    fd.append('title',title);fd.append('authors',document.getElementById('up-authors').value);
     fd.append('journal',document.getElementById('up-journal').value);
     fd.append('paper_type',document.getElementById('up-type').value);
     fd.append('due_date',document.getElementById('up-due').value);
@@ -878,48 +1383,45 @@ async function uploadPaper() {
     for(const sf of suppFiles) fd.append('supp_files',sf);
     const r=await api('POST','/papers/upload',fd,true);
     closeModal('upload-modal');
-    showToast('Paper uploaded! Opening review editor...');
-    loadPapers(); openPaper(r.id);
-  } catch(e){ document.getElementById('upload-error').textContent=e.message; }
-  finally{ btn.textContent='Upload & Analyze with Claude →'; btn.disabled=false; }
+    showToast('Paper uploaded! Opening review editor...','success');
+    loadPapers();openPaper(r.id);
+  } catch(e){document.getElementById('upload-error').textContent=e.message;}
+  finally{btn.textContent='Upload & Analyze with Claude →';btn.disabled=false;}
 }
 
-// ── Students ──
+// ── STUDENTS ──
 async function loadStudents() {
   try {
     const students=await api('GET','/students/');
     const el=document.getElementById('students-list');
-    if(!students?.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">🎓</span><div class="empty-text">No students yet</div><div class="empty-sub">Add your first student to track their progress</div></div>`; return; }
+    if(!students?.length){el.innerHTML=`<div class="empty-state"><span class="empty-icon">🎓</span><div class="empty-text">No students yet</div><div>Add your first student</div></div>`;return;}
     el.innerHTML=students.map(s=>`
       <div class="student-card">
-        <div class="student-header">
-          <div class="student-avatar">${s.name[0]}</div>
-          <div style="flex:1">
-            <div class="student-name">${s.name}</div>
-            <div class="student-prog">${s.program} · Year ${s.year} · ${s.thesis_title||'No thesis title'}</div>
-          </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+          <div class="avatar">${s.name[0]}</div>
+          <div style="flex:1"><div style="font-size:0.95rem;font-weight:600">${s.name}</div><div style="font-size:0.75rem;color:var(--muted)">${s.program} · Year ${s.year} · ${s.thesis_title||'No thesis title'}</div></div>
           <div style="display:flex;gap:0.4rem">
-            <button class="btn btn-secondary btn-sm" onclick="generateFollowup(${s.id})">✉️ Follow-up</button>
-            <button class="btn btn-secondary btn-sm" onclick="editStudent(${JSON.stringify(s).replace(/"/g,'&quot;')})">Edit</button>
+            <button class="btn btn-outline btn-sm" onclick="generateFollowup(${s.id})">✉️</button>
+            <button class="btn btn-outline btn-sm" onclick="editStudent(${JSON.stringify(s).replace(/"/g,'&quot;')})">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})">🗑</button>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">
           <span style="font-size:0.75rem;color:var(--muted)">Progress</span>
           <div class="progress-bar" style="flex:1;margin:0"><div class="progress-fill" style="width:${s.progress_percent}%"></div></div>
           <span style="font-size:0.75rem;font-weight:600">${s.progress_percent}%</span>
         </div>
         ${s.last_meeting?`<div style="font-size:0.72rem;color:var(--muted)">Last meeting: ${new Date(s.last_meeting).toLocaleDateString()}</div>`:'<div style="font-size:0.72rem;color:var(--danger)">No meeting recorded</div>'}
         ${s.notes?`<div style="font-size:0.78rem;color:var(--ink);margin-top:0.4rem;font-style:italic">${s.notes}</div>`:''}
-        ${s.milestones?.length?`<div style="margin-top:0.75rem"><div style="font-size:0.72rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem">MILESTONES</div>
+        ${s.milestones?.length?`<div style="margin-top:0.75rem"><div style="font-size:0.7rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem">MILESTONES</div>
           ${s.milestones.map(m=>`<div class="milestone-item">
             <div class="milestone-check ${m.completed?'done':''}" onclick="toggleMilestone(${s.id},${m.id},${!m.completed})">${m.completed?'✓':''}</div>
             <span style="${m.completed?'text-decoration:line-through;color:var(--muted)':''}">${m.title}</span>
             ${m.due_date?`<span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">${new Date(m.due_date).toLocaleDateString()}</span>`:''}
           </div>`).join('')}</div>`:''}
-        <button class="btn btn-secondary btn-sm" style="margin-top:0.75rem" onclick="addMilestone(${s.id})">+ Add Milestone</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:0.75rem" onclick="addMilestone(${s.id})">+ Milestone</button>
       </div>`).join('');
-  } catch(e){ console.error(e); }
+  } catch(e){console.error(e);}
 }
 
 function openAddStudentModal(){
@@ -927,22 +1429,17 @@ function openAddStudentModal(){
   document.getElementById('student-edit-id').value='';
   ['st-name','st-email','st-thesis','st-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('st-program').value='PhD';
-  document.getElementById('st-year').value=1;
-  document.getElementById('st-progress').value=0;
-  document.getElementById('st-last-meeting').value='';
-  document.getElementById('st-next-meeting').value='';
+  document.getElementById('st-year').value=1;document.getElementById('st-progress').value=0;
+  document.getElementById('st-last-meeting').value='';document.getElementById('st-next-meeting').value='';
   document.getElementById('student-modal').classList.add('open');
 }
 
 function editStudent(s){
   document.getElementById('student-modal-title').textContent='Edit Student';
   document.getElementById('student-edit-id').value=s.id;
-  document.getElementById('st-name').value=s.name||'';
-  document.getElementById('st-email').value=s.email||'';
-  document.getElementById('st-program').value=s.program||'PhD';
-  document.getElementById('st-year').value=s.year||1;
-  document.getElementById('st-thesis').value=s.thesis_title||'';
-  document.getElementById('st-progress').value=s.progress_percent||0;
+  document.getElementById('st-name').value=s.name||'';document.getElementById('st-email').value=s.email||'';
+  document.getElementById('st-program').value=s.program||'PhD';document.getElementById('st-year').value=s.year||1;
+  document.getElementById('st-thesis').value=s.thesis_title||'';document.getElementById('st-progress').value=s.progress_percent||0;
   document.getElementById('st-notes').value=s.notes||'';
   document.getElementById('st-last-meeting').value=s.last_meeting?s.last_meeting.split('T')[0]:'';
   document.getElementById('st-next-meeting').value=s.next_meeting?s.next_meeting.split('T')[0]:'';
@@ -951,44 +1448,38 @@ function editStudent(s){
 
 async function saveStudent(){
   const id=document.getElementById('student-edit-id').value;
-  const body={
-    name:document.getElementById('st-name').value,
-    email:document.getElementById('st-email').value,
-    program:document.getElementById('st-program').value,
-    year:parseInt(document.getElementById('st-year').value),
-    thesis_title:document.getElementById('st-thesis').value,
-    progress_percent:parseInt(document.getElementById('st-progress').value),
-    notes:document.getElementById('st-notes').value,
-    last_meeting:document.getElementById('st-last-meeting').value,
-    next_meeting:document.getElementById('st-next-meeting').value
-  };
+  const body={name:document.getElementById('st-name').value,email:document.getElementById('st-email').value,
+    program:document.getElementById('st-program').value,year:parseInt(document.getElementById('st-year').value),
+    thesis_title:document.getElementById('st-thesis').value,progress_percent:parseInt(document.getElementById('st-progress').value),
+    notes:document.getElementById('st-notes').value,last_meeting:document.getElementById('st-last-meeting').value,
+    next_meeting:document.getElementById('st-next-meeting').value};
   try {
     if(id) await api('PUT',`/students/${id}`,body);
     else await api('POST','/students/',body);
-    closeModal('student-modal'); loadStudents(); showToast('Student saved!');
-  } catch(e){ showToast(e.message,'error'); }
+    closeModal('student-modal');loadStudents();showToast('Student saved!','success');
+  } catch(e){showToast(e.message,'error');}
 }
 
 async function deleteStudent(id){
   if(!confirm('Delete this student?')) return;
-  await api('DELETE',`/students/${id}`); loadStudents(); showToast('Student deleted');
+  await api('DELETE',`/students/${id}`);loadStudents();showToast('Student deleted');
 }
 
 async function generateFollowup(id){
-  showToast('Generating follow-up email with Claude...');
+  showToast('Generating follow-up with Claude...');
   try {
     const r=await api('POST',`/students/${id}/followup`);
     document.getElementById('followup-text').value=r.email;
     document.getElementById('followup-modal').classList.add('open');
-  } catch(e){ showToast(e.message,'error'); }
+  } catch(e){showToast(e.message,'error');}
 }
 
-function copyFollowup(){ navigator.clipboard.writeText(document.getElementById('followup-text').value); showToast('Copied!'); }
+function copyFollowup(){navigator.clipboard.writeText(document.getElementById('followup-text').value);showToast('Copied!','success');}
 
 async function addMilestone(studentId){
-  const title=prompt('Milestone title:'); if(!title) return;
-  const due=prompt('Due date (YYYY-MM-DD):');
-  await api('POST',`/students/${studentId}/milestones`,{title,due_date:due});
+  const title=prompt('Milestone title:');if(!title) return;
+  const due=prompt('Due date (YYYY-MM-DD, optional):');
+  await api('POST',`/students/${studentId}/milestones`,{title,due_date:due||null});
   loadStudents();
 }
 
@@ -997,41 +1488,40 @@ async function toggleMilestone(studentId,milestoneId,completed){
   loadStudents();
 }
 
-// ── Grants ──
+// ── GRANTS ──
 async function loadGrants(){
   try {
     const grants=await api('GET','/grants/');
     const el=document.getElementById('grants-list');
-    if(!grants?.length){ el.innerHTML=`<div class="empty-state"><span class="empty-icon">💰</span><div class="empty-text">No grants yet</div><div class="empty-sub">Add grants or find opportunities with AI</div></div>`; return; }
+    if(!grants?.length){
+      el.innerHTML=`<div class="empty-state"><span class="empty-icon">💰</span><div class="empty-text">No grants yet</div><div>Use "Find Grants for Me" to discover relevant funding opportunities</div></div>`;
+      return;
+    }
     const now=new Date();
     el.innerHTML=grants.map(g=>{
       const days=g.deadline?Math.ceil((new Date(g.deadline)-now)/86400000):null;
       return `<div class="grant-card">
-        <div class="grant-header">
+        <div class="grant-opp-header">
           <span class="agency-badge">${g.agency}</span>
-          <div style="flex:1">
-            <div class="grant-title">${g.title}</div>
-            <div class="grant-meta">${g.program||''} ${g.amount?'· '+g.amount:''}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.3rem;align-items:flex-end">
-            ${days!==null?`<div class="due-text ${days<=30?'due-overdue':''}">${days<0?'Deadline passed':days+'d left'}</div>`:''}
-            <select class="grant-status-select" onchange="updateGrantStatus(${g.id},this.value)">
-              ${['identified','drafting','submitted','awarded','rejected'].map(s=>`<option ${g.status===s?'selected':''}>${s}</option>`).join('')}
-            </select>
-          </div>
+          <div style="flex:1"><div class="grant-opp-title">${g.title}</div>
+          <div class="grant-opp-meta">${g.program||''} ${g.amount?'· '+g.amount:''} ${days!==null?`· <span class="${days<=30?'deadline-soon':''}">${days<0?'Deadline passed':days+'d left'}</span>`:''}</div></div>
+          <select class="grant-status-select" onchange="updateGrantStatus(${g.id},this.value)">
+            ${['identified','drafting','submitted','awarded','rejected'].map(s=>`<option ${g.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
         </div>
-        ${g.description?`<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.6rem">${g.description.substring(0,150)}...</div>`:''}
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
-          <button class="btn btn-secondary btn-sm" onclick="openGrantWriter(${g.id},'${g.title.replace(/'/g,"\\'")}')">✨ Write with Claude</button>
-          ${g.url?`<a href="${g.url}" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">🔗 Link</a>`:''}
-          <button class="btn btn-danger btn-sm" onclick="deleteGrant(${g.id})">🗑</button>
+        ${g.description?`<div class="grant-opp-relevance">${g.description.substring(0,200)}...</div>`:''}
+        ${Object.keys(g.draft_content||{}).length?`<div style="font-size:0.7rem;color:var(--success);margin-bottom:0.5rem">✓ Drafted sections: ${Object.keys(g.draft_content).join(', ')}</div>`:''}
+        <div class="grant-actions">
+          <button class="btn btn-primary btn-sm" onclick="openGrantWriter(${g.id},'${g.title.replace(/'/g,"\\'").substring(0,40)}')">✨ Write with Claude</button>
+          ${g.url?`<a href="${g.url}" target="_blank" class="btn btn-outline btn-sm">🔗 View Grant</a>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteGrant(${g.id})">🗑 Delete</button>
         </div>
-        ${Object.keys(g.draft_content||{}).length?`<div style="margin-top:0.5rem;font-size:0.7rem;color:var(--success)">✓ Drafted: ${Object.keys(g.draft_content).join(', ')}</div>`:''}
-      </div>`;}).join('');
-  } catch(e){ console.error(e); }
+      </div>`;
+    }).join('');
+  } catch(e){console.error(e);}
 }
 
-function openAddGrantModal(){ document.getElementById('grant-modal').classList.add('open'); }
+function openAddGrantModal(){document.getElementById('grant-modal').classList.add('open');}
 
 async function saveGrant(){
   try {
@@ -1044,34 +1534,55 @@ async function saveGrant(){
       url:document.getElementById('gr-url').value,
       description:document.getElementById('gr-desc').value,
     });
-    closeModal('grant-modal'); loadGrants(); showToast('Grant added!');
-  } catch(e){ showToast(e.message,'error'); }
+    closeModal('grant-modal');loadGrants();showToast('Grant added!','success');
+  } catch(e){showToast(e.message,'error');}
 }
 
-async function updateGrantStatus(id,status){
-  await api('PUT',`/grants/${id}/status`,{status}); showToast('Status updated');
-}
+async function updateGrantStatus(id,status){await api('PUT',`/grants/${id}/status`,{status});showToast('Status updated');}
 
 async function deleteGrant(id){
   if(!confirm('Delete this grant?')) return;
-  await api('DELETE',`/grants/${id}`); loadGrants(); showToast('Deleted');
+  await api('DELETE',`/grants/${id}`);loadGrants();showToast('Deleted');
 }
 
-async function findOpportunities(){
-  const profile=prompt('Describe your research (e.g. "statistical genetics, Mendelian randomization, cardiovascular epidemiology at McGill"):','');
-  if(!profile) return;
-  showToast('Finding grant opportunities with Claude...');
+// ── GRANT SCOUT ──
+function openGrantScoutModal(){
+  const grid=document.getElementById('keyword-grid');
+  grid.innerHTML=RESEARCH_KEYWORDS.map(k=>`<span class="keyword-chip" onclick="toggleKeyword(this,'${k}')">${k}</span>`).join('');
+  document.getElementById('scout-profile').value=currentUser?`${currentUser.name}, ${currentUser.role} at ${currentUser.institution}, Department of ${currentUser.department}`:'';
+  document.getElementById('grant-scout-modal').classList.add('open');
+}
+
+function toggleKeyword(el,kw){
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')) selectedKeywords.push(kw);
+  else selectedKeywords=selectedKeywords.filter(k=>k!==kw);
+}
+
+async function runGrantScout(){
+  const profile=document.getElementById('scout-profile').value;
+  const context=document.getElementById('scout-context').value;
+  const keywords=selectedKeywords.join(', ');
+  const fullProfile=`${profile}. Research areas: ${keywords}. ${context}`;
+  const btn=document.getElementById('scout-btn');
+  btn.textContent='🤖 Finding grants...';btn.disabled=true;
+  document.getElementById('scout-error').textContent='';
   try {
-    await api('POST','/grants/find-opportunities',{profile});
-    loadGrants(); showToast('Opportunities added to your list!');
-  } catch(e){ showToast(e.message,'error'); }
+    await api('POST','/grants/find-opportunities',{profile:fullProfile});
+    closeModal('grant-scout-modal');
+    loadGrants();
+    showToast('Grant opportunities added to your list!','success');
+  } catch(e){document.getElementById('scout-error').textContent=e.message;}
+  finally{btn.textContent='🤖 Find Grants with Claude →';btn.disabled=false;}
 }
 
+// ── GRANT WRITER ──
 function openGrantWriter(grantId,title){
   currentGrantId=grantId;
-  document.getElementById('grant-writer-title').textContent=`✨ Grant Writing Studio: ${title.substring(0,40)}`;
+  document.getElementById('grant-writer-title').textContent=`✨ Grant Writing Studio: ${title}`;
   document.getElementById('grant-output').style.display='none';
   document.getElementById('grant-existing').value='';
+  document.getElementById('grant-profile').value=currentUser?`${currentUser.name}, ${currentUser.role} at ${currentUser.institution}, Department of ${currentUser.department}. Research focus: machine learning, statistical genetics, epidemiology, multi-omics, Mendelian randomization.`:'';
   document.getElementById('grant-writer-modal').classList.add('open');
 }
 
@@ -1085,38 +1596,53 @@ async function writeGrantSection(){
   const profile=document.getElementById('grant-profile').value;
   const existing=document.getElementById('grant-existing').value;
   const btn=document.getElementById('grant-write-btn');
-  btn.textContent='✨ Claude is writing...'; btn.disabled=true;
+  btn.textContent='✨ Claude is writing...';btn.disabled=true;
   document.getElementById('grant-writer-error').textContent='';
   try {
     const r=await api('POST',`/grants/${currentGrantId}/write`,{section:selectedGrantSection,profile,existing});
     document.getElementById('grant-output-text').value=r.content;
     document.getElementById('grant-output').style.display='block';
-    showToast('Section written!');
-  } catch(e){ document.getElementById('grant-writer-error').textContent=e.message; }
-  finally{ btn.textContent='✨ Write with Claude →'; btn.disabled=false; }
+    showToast('Section written!','success');
+  } catch(e){document.getElementById('grant-writer-error').textContent=e.message;}
+  finally{btn.textContent='✨ Write with Claude →';btn.disabled=false;}
 }
 
-function copyGrantOutput(){ navigator.clipboard.writeText(document.getElementById('grant-output-text').value); showToast('Copied to clipboard!'); }
-
-// ── Utilities ──
-function formatType(t){ return {journal_review:'Journal Review',thesis_phd:'PhD Thesis',thesis_msc:'MSc Thesis',grant:'Grant Review'}[t]||t; }
-
-function showToast(msg,type='success'){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='toast show'+(type==='error'?' error':'');
-  setTimeout(()=>el.classList.remove('show'),3000);
+async function improveGrant(){
+  document.getElementById('grant-existing').value=document.getElementById('grant-output-text').value;
+  await writeGrantSection();
 }
 
-// ── Start ──
-if(token && currentUser) initApp();
-
-// Create demo account on first load if API is available
-async function ensureDemoAccount(){
+async function downloadGrantSection(format){
+  const content=document.getElementById('grant-output-text').value;
+  const section=selectedGrantSection;
   try {
-    await api('POST','/auth/register',{email:'demo@mcgill.ca',password:'demo1234',name:'Dr. Afshin Rahmani',role:'researcher',institution:'McGill University',department:'Epidemiology & Biostatistics'});
-  } catch(e){ /* already exists */ }
+    const r=await fetch(`${API}/grants/${currentGrantId}/download`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({content,section,format})
+    });
+    if(!r.ok) throw new Error('Download failed');
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`grant_${section}.${format==='pdf'?'pdf':'docx'}`;a.click();
+    showToast(`Downloaded as ${format.toUpperCase()}!`,'success');
+  } catch(e){showToast(e.message,'error');}
 }
-ensureDemoAccount();
+
+function copyGrantOutput(){navigator.clipboard.writeText(document.getElementById('grant-output-text').value);showToast('Copied!','success');}
+
+// ── UTILS ──
+function fmtType(t){return{journal_review:'Journal Review',thesis_phd:'PhD Thesis',thesis_msc:'MSc Thesis',grant:'Grant Review'}[t]||t;}
+
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+// ── INIT ──
+if(token&&currentUser) initApp();
 </script>
 </body>
 </html>
